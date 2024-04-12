@@ -34,20 +34,24 @@ export async function POST(request) {
         });
 
         // Retrieve SMTP configuration from the environment variables
-        const smtpServer = formData.get('simple') !== 'true' ? SERVER_URL : process.env.NEXT_PRIVATE_SMTP_SERVER;
-        const smtpPort = formData.get('simple') !== 'true' ? SERVER_PORT : process.env.NEXT_PRIVATE_SMTP_PORT;
-        const email = formData.get('simple') !== 'true' ? SERVER_USER : process.env.NEXT_PRIVATE_EMAIL;
-        const password = formData.get('simple') !== 'true' ? SERVER_PASS : process.env.NEXT_PRIVATE_PASSWORD;
+        const smtpServer = formData.get('simple') !== 'true' ? SERVER_URL : process.env.NEXT_PRIVATE_SMTP_SERVER_APPLE;
+        const smtpPort = formData.get('simple') !== 'true' ? SERVER_PORT : process.env.NEXT_PRIVATE_SMTP_PORT_APPLE;
+        const email = formData.get('simple') !== 'true' ? SERVER_USER : process.env.NEXT_PRIVATE_EMAIL_APPLE;
+        const password = formData.get('simple') !== 'true' ? SERVER_PASS : process.env.NEXT_PRIVATE_PASSWORD_APPLE;
 
 
         // Create a transporter using your email provider's SMTP settings
         const transporter = nodemailer.createTransport({
             host: smtpServer,
             port: parseInt(smtpPort), // Convert port to number
-            secure: smtpPort === '465', // true for port 465 (SSL), false otherwise
+            // secure: smtpPort === '465', // true for port 465 (SSL), false otherwise
+            secure: false,
             auth: {
                 user: email,
                 pass: password,
+            },
+            tls: {
+                rejectUnauthorized: false,
             },
         });
 
