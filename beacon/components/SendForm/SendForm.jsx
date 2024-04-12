@@ -8,6 +8,8 @@ const SendForm = () => {
 
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [showErrorPopup, setShowErrorPopup] = useState(false);
+    const [Sending, setSending] = useState(false); // Track submission status
+    const [success, setSuccess] = useState(false); // Track success status
 
     const [activeTab, setActiveTab] = useState('Simple');
     const [file_csv, setFile_cvs] = useState(null);
@@ -54,6 +56,7 @@ const SendForm = () => {
 
     const handleSendEmail = async (e) => {
         e.preventDefault();
+        setSending(true); // Begin the sending process
         console.log(file_csv, file_html, formData_simple, formData_advanced);
 
         const formData = new FormData();
@@ -84,6 +87,7 @@ const SendForm = () => {
                 const data = await response.json();
                 console.log('Email sent successfully:', data);
                 setShowSuccessPopup(true);
+                setSuccess(true);
             } else {
                 console.error('Error sending email:', response.status, response.statusText);
                 setShowErrorPopup(true);
@@ -91,6 +95,8 @@ const SendForm = () => {
         } catch (error) {
             console.error('Network error:', error);
             setShowErrorPopup(true);
+        } finally {
+            setSending(false); // End the sending process
         }
 
         // Reset the form state after either success or failure
@@ -254,10 +260,12 @@ const SendForm = () => {
 
                                         <div>
                                             <button
-                                                className="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className={`block w-full px-4 py-2 ${Sending || success ? 'bg-green-500 hover:bg-green-900' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                                 type="submit"
+                                                disabled={Sending || success}
+                                                style={{ cursor: Sending || success ? 'not-allowed' : 'pointer' }}
                                             >
-                                                Send Emails
+                                                {Sending ? 'Sending...' : success ? 'Sent!' : 'Send Emails'}
                                             </button>
 
                                             {/* Container for button and popup */}
@@ -393,10 +401,12 @@ const SendForm = () => {
 
                                         <div>
                                             <button
-                                                className="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className={`block w-full px-4 py-2 ${Sending || success ? 'bg-green-500 hover:bg-green-900' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                                 type="submit"
+                                                disabled={Sending || success}
+                                                style={{ cursor: Sending || success ? 'not-allowed' : 'pointer' }}
                                             >
-                                                Send Emails
+                                                {Sending ? 'Sending...' : success ? 'Sent!' : 'Send Emails'}
                                             </button>
 
                                             {/* Container for button and popup */}
@@ -415,8 +425,8 @@ const SendForm = () => {
                         </div>
                     </div>
                 </main>
-            </div>
-        </section>
+            </div >
+        </section >
     )
 }
 
