@@ -1,8 +1,126 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
+import Success_Popup from '../modules/Success_Popup';
+import Error_Popup from '../modules/Error_Popup';
 const SendForm = () => {
 
+    const formref = useRef(null);
+
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const [showErrorPopup, setShowErrorPopup] = useState(false);
+
     const [activeTab, setActiveTab] = useState('Simple');
+    const [file_csv, setFile_cvs] = useState(null);
+    const [file_html, setFile_html] = useState(null);
+    const [formData_simple, setFormData_simple] = useState({
+        simple: true,
+        sender_email: '',
+        subject: ''
+    });
+
+    const [formData_advanced, setFormData_advanced] = useState({
+        simple: false,
+        SERVER_URL: '',
+        SERVER_PORT: '',
+        SERVER_USER: '',
+        SERVER_PASS: '',
+        sender_email: '',
+        subject: ''
+    });
+
+    const handleFileChange = (e) => {
+        const { name, files } = e.target;
+        if (name === 'csv_excel') {
+            setFile_cvs(files[0]);
+        } else if (name === 'html_template') {
+            setFile_html(files[0]);
+        }
+    };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (activeTab === 'Simple') {
+            setFormData_simple((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        } else {
+            setFormData_advanced((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
+    };
+
+
+    const handleSendEmail = async (e) => {
+        e.preventDefault();
+        console.log(file_csv, file_html, formData_simple, formData_advanced);
+
+        const formData = new FormData();
+        const data = activeTab === 'Simple' ? formData_simple : formData_advanced;
+
+        // Append form data
+        for (const key in data) {
+            if (data[key] !== null && data[key] !== '') {
+                formData.append(key, data[key]);
+            }
+        }
+
+        // Append files if present
+        if (file_csv) {
+            formData.append('csv_excel', file_csv);
+        }
+        if (file_html) {
+            formData.append('html_template', file_html);
+        }
+
+        try {
+            const response = await fetch('/api/SendEmails', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Email sent successfully:', data);
+                setShowSuccessPopup(true);
+            } else {
+                console.error('Error sending email:', response.status, response.statusText);
+                setShowErrorPopup(true);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            setShowErrorPopup(true);
+        }
+
+        // Reset the form state after either success or failure
+        setFile_cvs(null);
+        setFile_html(null);
+        setFormData_simple({
+            simple: true,
+            sender_email: '',
+            subject: ''
+        });
+        setFormData_advanced({
+            simple: false,
+            SERVER_URL: '',
+            SERVER_PORT: '',
+            SERVER_USER: '',
+            SERVER_PASS: '',
+            sender_email: '',
+            subject: ''
+        });
+
+        // Also reset file inputs
+        if (formref.current) {
+            formref.current.reset();
+        }
+    };
+
+    const closePopup = () => {
+        setShowSuccessPopup(false);
+        setShowErrorPopup(false);
+    };
 
     return (
         <section className="bg-white" id="EMAIL_SEND_FORM">
@@ -16,21 +134,11 @@ const SendForm = () => {
 
                     <div className="hidden lg:relative lg:block lg:p-12">
                         <div className="block text-white">
-                            <svg
-                                className="h-8 sm:h-10"
-                                viewBox="0 0 28 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M0.41 10.3847C1.14777 7.4194 2.85643 4.7861 5.2639 2.90424C7.6714 1.02234 10.6393 0 13.695 0C16.7507 0 19.7186 1.02234 22.1261 2.90424C24.5336 4.7861 26.2422 7.4194 26.98 10.3847H25.78C23.7557 10.3549 21.7729 10.9599 20.11 12.1147C20.014 12.1842 19.9138 12.2477 19.81 12.3047H19.67C19.5662 12.2477 19.466 12.1842 19.37 12.1147C17.6924 10.9866 15.7166 10.3841 13.695 10.3841C11.6734 10.3841 9.6976 10.9866 8.02 12.1147C7.924 12.1842 7.8238 12.2477 7.72 12.3047H7.58C7.4762 12.2477 7.376 12.1842 7.28 12.1147C5.6171 10.9599 3.6343 10.3549 1.61 10.3847H0.41ZM23.62 16.6547C24.236 16.175 24.9995 15.924 25.78 15.9447H27.39V12.7347H25.78C24.4052 12.7181 23.0619 13.146 21.95 13.9547C21.3243 14.416 20.5674 14.6649 19.79 14.6649C19.0126 14.6649 18.2557 14.416 17.63 13.9547C16.4899 13.1611 15.1341 12.7356 13.745 12.7356C12.3559 12.7356 11.0001 13.1611 9.86 13.9547C9.2343 14.416 8.4774 14.6649 7.7 14.6649C6.9226 14.6649 6.1657 14.416 5.54 13.9547C4.4144 13.1356 3.0518 12.7072 1.66 12.7347H0V15.9447H1.61C2.39051 15.924 3.154 16.175 3.77 16.6547C4.908 17.4489 6.2623 17.8747 7.65 17.8747C9.0377 17.8747 10.392 17.4489 11.53 16.6547C12.1468 16.1765 12.9097 15.9257 13.69 15.9447C14.4708 15.9223 15.2348 16.1735 15.85 16.6547C16.9901 17.4484 18.3459 17.8738 19.735 17.8738C21.1241 17.8738 22.4799 17.4484 23.62 16.6547ZM23.62 22.3947C24.236 21.915 24.9995 21.664 25.78 21.6847H27.39V18.4747H25.78C24.4052 18.4581 23.0619 18.886 21.95 19.6947C21.3243 20.156 20.5674 20.4049 19.79 20.4049C19.0126 20.4049 18.2557 20.156 17.63 19.6947C16.4899 18.9011 15.1341 18.4757 13.745 18.4757C12.3559 18.4757 11.0001 18.9011 9.86 19.6947C9.2343 20.156 8.4774 20.4049 7.7 20.4049C6.9226 20.4049 6.1657 20.156 5.54 19.6947C4.4144 18.8757 3.0518 18.4472 1.66 18.4747H0V21.6847H1.61C2.39051 21.664 3.154 21.915 3.77 22.3947C4.908 23.1889 6.2623 23.6147 7.65 23.6147C9.0377 23.6147 10.392 23.1889 11.53 22.3947C12.1468 21.9165 12.9097 21.6657 13.69 21.6847C14.4708 21.6623 15.2348 21.9135 15.85 22.3947C16.9901 23.1884 18.3459 23.6138 19.735 23.6138C21.1241 23.6138 22.4799 23.1884 23.62 22.3947Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
+                            <img src="https://mailer-6i6.pages.dev/logo.png" alt="mailer" className="w-16 h-16" />
                         </div>
 
                         <h2 className="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
-                            Welcome to Mailer
+                            Welcome to Mailer 📬
                         </h2>
 
                         <p className="mt-4 leading-relaxed text-white/90">
@@ -48,21 +156,11 @@ const SendForm = () => {
                             <div
                                 className="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20"
                             >
-                                <svg
-                                    className="h-8 sm:h-10"
-                                    viewBox="0 0 28 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M0.41 10.3847C1.14777 7.4194 2.85643 4.7861 5.2639 2.90424C7.6714 1.02234 10.6393 0 13.695 0C16.7507 0 19.7186 1.02234 22.1261 2.90424C24.5336 4.7861 26.2422 7.4194 26.98 10.3847H25.78C23.7557 10.3549 21.7729 10.9599 20.11 12.1147C20.014 12.1842 19.9138 12.2477 19.81 12.3047H19.67C19.5662 12.2477 19.466 12.1842 19.37 12.1147C17.6924 10.9866 15.7166 10.3841 13.695 10.3841C11.6734 10.3841 9.6976 10.9866 8.02 12.1147C7.924 12.1842 7.8238 12.2477 7.72 12.3047H7.58C7.4762 12.2477 7.376 12.1842 7.28 12.1147C5.6171 10.9599 3.6343 10.3549 1.61 10.3847H0.41ZM23.62 16.6547C24.236 16.175 24.9995 15.924 25.78 15.9447H27.39V12.7347H25.78C24.4052 12.7181 23.0619 13.146 21.95 13.9547C21.3243 14.416 20.5674 14.6649 19.79 14.6649C19.0126 14.6649 18.2557 14.416 17.63 13.9547C16.4899 13.1611 15.1341 12.7356 13.745 12.7356C12.3559 12.7356 11.0001 13.1611 9.86 13.9547C9.2343 14.416 8.4774 14.6649 7.7 14.6649C6.9226 14.6649 6.1657 14.416 5.54 13.9547C4.4144 13.1356 3.0518 12.7072 1.66 12.7347H0V15.9447H1.61C2.39051 15.924 3.154 16.175 3.77 16.6547C4.908 17.4489 6.2623 17.8747 7.65 17.8747C9.0377 17.8747 10.392 17.4489 11.53 16.6547C12.1468 16.1765 12.9097 15.9257 13.69 15.9447C14.4708 15.9223 15.2348 16.1735 15.85 16.6547C16.9901 17.4484 18.3459 17.8738 19.735 17.8738C21.1241 17.8738 22.4799 17.4484 23.62 16.6547ZM23.62 22.3947C24.236 21.915 24.9995 21.664 25.78 21.6847H27.39V18.4747H25.78C24.4052 18.4581 23.0619 18.886 21.95 19.6947C21.3243 20.156 20.5674 20.4049 19.79 20.4049C19.0126 20.4049 18.2557 20.156 17.63 19.6947C16.4899 18.9011 15.1341 18.4757 13.745 18.4757C12.3559 18.4757 11.0001 18.9011 9.86 19.6947C9.2343 20.156 8.4774 20.4049 7.7 20.4049C6.9226 20.4049 6.1657 20.156 5.54 19.6947C4.4144 18.8757 3.0518 18.4472 1.66 18.4747H0V21.6847H1.61C2.39051 21.664 3.154 21.915 3.77 22.3947C4.908 23.1889 6.2623 23.6147 7.65 23.6147C9.0377 23.6147 10.392 23.1889 11.53 22.3947C12.1468 21.9165 12.9097 21.6657 13.69 21.6847C14.4708 21.6623 15.2348 21.9135 15.85 22.3947C16.9901 23.1884 18.3459 23.6138 19.735 23.6138C21.1241 23.6138 22.4799 23.1884 23.62 22.3947Z"
-                                        fill="currentColor"
-                                    />
-                                </svg>
+                                <img src="https://mailer-6i6.pages.dev/logo.png" alt="mailer" className="w-16 h-16" />
                             </div>
 
                             <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
-                                Welcome to Mailer
+                                Welcome to Mailer 📬
                             </h1>
 
                             <p className="mt-4 leading-relaxed text-gray-500">
@@ -71,18 +169,18 @@ const SendForm = () => {
                             </p>
                         </div>
 
-                        <div class="my-3">
-                            <div class="p-6 rounded-lg">
-                                <div class="flex space-x-4 mb-6">
+                        <div className="my-3">
+                            <div className="p-6 rounded-lg">
+                                <div className="flex space-x-4 mb-6">
                                     <button
-                                        class={`px-4 py-2 rounded-t-lg ${activeTab === 'Simple' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
+                                        className={`px-4 py-2 rounded-t-lg ${activeTab === 'Simple' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
                                             }`}
                                         onClick={() => setActiveTab('Simple')}
                                     >
                                         Simple
                                     </button>
                                     <button
-                                        class={`px-4 py-2 rounded-t-lg ${activeTab === 'Advanced' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
+                                        className={`px-4 py-2 rounded-t-lg ${activeTab === 'Advanced' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
                                             }`}
                                         onClick={() => setActiveTab('Advanced')}
                                     >
@@ -92,166 +190,224 @@ const SendForm = () => {
 
                                 {activeTab === 'Simple' ? (
                                     // Simple Form
-                                    <form class="space-y-6">
+                                    <form className="space-y-6 text-black"
+                                        ref={formref}
+                                        onSubmit={handleSendEmail}
+                                    >
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 CSV / Excel List
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-black"
                                                 type="file"
                                                 name="csv_excel"
                                                 accept=".csv, .xls, .xlsx"
+                                                onChange={handleFileChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 HTML Template
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-black"
                                                 type="file"
                                                 name="html_template"
                                                 accept=".html, .htm"
+                                                onChange={handleFileChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 Sender's Email
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Email"
                                                 type="email"
                                                 name="sender_email"
+                                                value={formData_simple.sender_email || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 Subject
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Subject"
                                                 type="text"
                                                 name="subject"
+                                                value={formData_simple.subject || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
                                             <button
-                                                class="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                type="button"
+                                                className="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                type="submit"
                                             >
                                                 Send Emails
                                             </button>
+
+                                            {/* Container for button and popup */}
+                                            <div className="relative mt-4">
+                                                {showSuccessPopup && (
+                                                    <Success_Popup onClose={closePopup} />
+                                                )}
+                                                {showErrorPopup && (
+                                                    <Error_Popup onClose={closePopup} />
+                                                )}
+                                            </div>
                                         </div>
                                     </form>
                                 ) : (
                                     // Advanced Form
-                                    <form class="space-y-6">
+                                    <form className="space-y-6 text-black"
+                                        ref={formref}
+                                        onSubmit={handleSendEmail}
+                                    >
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 SMTP SERVER URL
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                                                type="URL"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                type="text"
                                                 name="SERVER_URL"
+                                                value={formData_advanced.SERVER_URL || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 SMTP PORT
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 type="number"
                                                 name="SERVER_PORT"
+                                                value={formData_advanced.SERVER_PORT || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 SERVER USERNAME
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 type="text"
                                                 name="SERVER_USER"
+                                                value={formData_advanced.SERVER_USER || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 SERVER PASSWORD
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 type="password"
                                                 name="SERVER_PASS"
+                                                value={formData_advanced.SERVER_PASS || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 CSV / Excel List
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 type="file"
                                                 name="csv_excel"
                                                 accept=".csv, .xls, .xlsx"
+                                                onChange={handleFileChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 HTML Template
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 type="file"
                                                 name="html_template"
                                                 accept=".html, .htm"
+                                                onChange={handleFileChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 Sender's Email
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Email"
                                                 type="email"
                                                 name="sender_email"
+                                                value={formData_advanced.sender_email || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
-                                            <label class="block text-lg font-medium text-gray-700 mb-1">
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
                                                 Subject
                                             </label>
                                             <input
-                                                class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Subject"
                                                 type="text"
                                                 name="subject"
+                                                value={formData_advanced.subject || ''}
+                                                onChange={handleInputChange}
+                                                required
                                             />
                                         </div>
 
                                         <div>
                                             <button
-                                                class="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                type="button"
+                                                className="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                type="submit"
                                             >
                                                 Send Emails
                                             </button>
+
+                                            {/* Container for button and popup */}
+                                            <div className="relative mt-4">
+                                                {showSuccessPopup && (
+                                                    <Success_Popup onClose={closePopup} />
+                                                )}
+                                                {showErrorPopup && (
+                                                    <Error_Popup onClose={closePopup} />
+                                                )}
+                                            </div>
                                         </div>
                                     </form>
                                 )}
