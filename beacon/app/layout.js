@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Favicon from '../public/favicon.png';
 import { Inter } from 'next/font/google';
 import "./globals.css";
 import Navbar2 from "@/components/Navbar/Navbar";
@@ -11,9 +12,7 @@ export const metadata = {
   description: "Beacon offers user-friendly, scalable mass mailing solutions designed to boost your marketing efforts and reach your audience effectively.",
   image: "../public/favicon.png",
   url: "https://beacon.djdiptayan.in/",
-  icons: {
-    icon: "../public/favicon.png",
-  },
+  icons: [{ rel: 'icon', url: Favicon.src }],
 };
 
 
