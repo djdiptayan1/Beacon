@@ -1,10 +1,14 @@
 import os
 import csv
+import ssl
+import certifi
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load
 import smtplib
+from smtplib import SMTP, SMTPAuthenticationError, SMTPException
 
+os.environ["SSL_CERT_FILE"] = certifi.where()
 # Load environment variables from .env file
 load()
 
@@ -13,7 +17,7 @@ SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = os.getenv("SMTP_PORT")
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
-SENDER_EMAIL = "dj2037@srmist.edu.in"
+SENDER_EMAIL = "djdiptayan1@gmail.com"
 
 
 def read_template(filename):
@@ -32,11 +36,23 @@ def send_email(receiver_email, recipient_name, subject, message):
     msg["Subject"] = subject
     msg.attach(MIMEText(personalized_message, "html"))
 
-    # Connect to the SMTP server
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(EMAIL, PASSWORD)
-        server.send_message(msg)
+    # Create an SSL context
+    context = ssl.create_default_context()
+
+    try:
+        # Connect to the SMTP server using STARTTLS
+        with SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls(context=context)  # Secure the connection
+            server.login(EMAIL, PASSWORD)
+            server.send_message(msg)
+    except SMTPAuthenticationError:
+        print(
+            "Failed to authenticate with the SMTP server. Check your username/password."
+        )
+    except SMTPException as e:
+        print(f"An SMTP error occurred: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 def main():
