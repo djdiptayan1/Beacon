@@ -51,16 +51,20 @@ export async function POST(request) {
             },
         });
 
-        // Create the email options
-        const mailOptions = {
-            from: senderEmail, // Sender address
-            to: recipients.map((recipient) => recipient.Email).join(','),
-            subject,
-            html: htmlContent,
-        };
+        // Sending emails individually
+        for (const recipient of recipients) {
+            // Replace the placeholder with the recipient's name
+            const personalizedHtml = htmlContent.replace("[Recipient's Name]", recipient.Name);
 
-        // Send the email
-        await transporter.sendMail(mailOptions);
+            const mailOptions = {
+                from: senderEmail,
+                to: recipients.map((recipient) => recipient.Email).join(','),
+                subject: subject,
+                html: personalizedHtml,
+            };
+
+            await transporter.sendMail(mailOptions);
+        }
 
         // Return a success response
         return new Response(JSON.stringify({ message: 'Email sent successfully!' }), {
