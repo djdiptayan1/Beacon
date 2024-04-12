@@ -10,16 +10,16 @@ const Hero = () => {
             ></div>
 
             <div
-                className="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:h-screen lg:items-center lg:px-8"
+                className="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex h-screen lg:items-center lg:px-8"
             >
                 <div className="max-w-xl text-center ltr:sm:text-left rtl:sm:text-right">
-                    <h1 className="text-3xl font-extrabold sm:text-5xl">
+                    <h1 className="text-3xl font-extrabold sm:text-5xl text-blue-900">
                         Reach Your Audience
 
                         <strong className="block font-extrabold text-rose-700">Effortlessly.</strong>
                     </h1>
 
-                    <p className="mt-4 max-w-lg sm:text-xl/relaxed">
+                    <p className="mt-4 max-w-lg sm:text-xl/relaxed text-blue-700 font-semibold">
                         Empower your business with our cutting-edge mass email sending platform. Connect, engage, and grow your audience with ease.
                     </p>
 
