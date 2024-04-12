@@ -55,7 +55,7 @@ const Footer = () => {
                 <p className="mt-12 text-center text-sm text-gray-500 lg:text-right">
                     Copyright &copy; 2024. All rights reserved. <br />
                     <span>
-                        <a href="https://www.djdiptayan.in/" noreferrer noopener target="_blank">Diptayan Jash</a>
+                        <a href="https://www.djdiptayan.in/" target="_blank">Diptayan Jash</a>
                     </span>
                 </p>
             </div>
