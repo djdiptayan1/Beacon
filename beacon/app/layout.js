@@ -9,6 +9,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "Beacon - Simplifying Mass Mailing",
   description: "Beacon offers user-friendly, scalable mass mailing solutions designed to boost your marketing efforts and reach your audience effectively.",
+  image: "https://mailer-6i6.pages.dev/logo.png",
+  url: "https://beacon.djdiptayan.in/",
 };
 
 
