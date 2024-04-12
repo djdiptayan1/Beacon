@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Inline CSS for better compatibility with email clients */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .email-header img {
+            max-width: 100px;
+        }
+
+        .email-body {
+            font-size: 16px;
+            line-height: 24px;
+            color: #333333;
+        }
+
+        .email-body p {
+            margin-bottom: 16px;
+        }
+
+        .email-footer {
+            text-align: center;
+            color: #888888;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid #dddddd;
+        }
+
+        /* Add styles for the button */
+        .email-footer a.button {
+            display: inline-block;
+            padding: 12px 24px;
+            color: #ffffff;
+            background-color: #28a745;
+            /* Green color */
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>
+                <div class="email-container">
+                    <!-- Header -->
+                    <div class="email-header">
+                        <img src="https://example.com/logo.png" alt="Company Logo">
+                    </div>
+
+                    <!-- Body -->
+                    <div class="email-body">
+                        <p>Dear [Recipient's Name],</p>
+
+                        <p>We are pleased to announce our latest update! Here's a summary of the key features:</p>
+
+                        <ul>
+                            <li>Feature 1: Description of feature 1.</li>
+                            <li>Feature 2: Description of feature 2.</li>
+                            <li>Feature 3: Description of feature 3.</li>
+                        </ul>
+
+                        <p>For more details, visit our website.</p>
+
+                        <p>Thank you for your continued support!</p>
+
+                        <p>Best regards,</p>
+                        <p>Your Company</p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="email-footer">
+                        <p>&copy; 2024 Your Company Name. All rights reserved.</p>
+                        <p>1234 Street Name, City, State, Zip</p>
+                        <p><a href="https://example.com">Unsubscribe</a> | <a href="https://example.com">Privacy
+                                Policy</a></p>
+                        <!-- Add green button here -->
+                        <p>
+                            <a href="https://www.youtube.com" class="button">Watch on YouTube</a>
+                        </p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
