@@ -17,7 +17,9 @@ const SendForm = () => {
     const [formData_simple, setFormData_simple] = useState({
         simple: true,
         sender_email: '',
-        subject: ''
+        subject: '',
+        email_field: '',
+        recipient_field: ''
     });
 
     const [formData_advanced, setFormData_advanced] = useState({
@@ -27,7 +29,9 @@ const SendForm = () => {
         SERVER_USER: '',
         SERVER_PASS: '',
         sender_email: '',
-        subject: ''
+        subject: '',
+        email_field: '',
+        recipient_field: ''
     });
 
     const handleFileChange = (e) => {
@@ -57,7 +61,6 @@ const SendForm = () => {
     const handleSendEmail = async (e) => {
         e.preventDefault();
         setSending(true); // Begin the sending process
-        console.log(file_csv, file_html, formData_simple, formData_advanced);
 
         const formData = new FormData();
         const data = activeTab === 'Simple' ? formData_simple : formData_advanced;
@@ -105,7 +108,9 @@ const SendForm = () => {
         setFormData_simple({
             simple: true,
             sender_email: '',
-            subject: ''
+            subject: '',
+            email_field: '',
+            recipient_field: ''
         });
         setFormData_advanced({
             simple: false,
@@ -114,7 +119,9 @@ const SendForm = () => {
             SERVER_USER: '',
             SERVER_PASS: '',
             sender_email: '',
-            subject: ''
+            subject: '',
+            email_field: '',
+            recipient_field: ''
         });
 
         // Also reset file inputs
@@ -259,6 +266,36 @@ const SendForm = () => {
                                         </div>
 
                                         <div>
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
+                                                Email Field Name
+                                            </label>
+                                            <input
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Email Field Name"
+                                                type="text"
+                                                name="email_field"
+                                                value={formData_simple.email_field || ''}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
+                                                Recipient Field Name
+                                            </label>
+                                            <input
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Recipient Field Name"
+                                                type="text"
+                                                name="recipient_field"
+                                                value={formData_simple.recipient_field || ''}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
                                             <button
                                                 className={`block w-full px-4 py-2 ${Sending || success ? 'bg-green-500 hover:bg-green-900' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                                 type="submit"
@@ -394,6 +431,36 @@ const SendForm = () => {
                                                 type="text"
                                                 name="subject"
                                                 value={formData_advanced.subject || ''}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
+                                                Email Field Name
+                                            </label>
+                                            <input
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Email Field Name"
+                                                type="text"
+                                                name="Email Field Name"
+                                                value={formData_advanced.email_field || ''}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg font-medium text-gray-700 mb-1">
+                                                Recipient Field Name
+                                            </label>
+                                            <input
+                                                className="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Recipient Field Name"
+                                                type="text"
+                                                name="Recipient Field Name"
+                                                value={formData_advanced.recipient_field || ''}
                                                 onChange={handleInputChange}
                                                 required
                                             />
