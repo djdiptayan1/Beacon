@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Welcome to Beacon!</h1>
+    </div>
+
+    <div class="content">
+        <h2>Hello {{Receipient_name}}!</h2>
+
+        <p>Thank you for joining our community. We're excited to have you on board!</p>
+
+        <p>This is a sample email template that demonstrates how to use personalization in your mass email campaigns.
+        </p>
+
+        <p>Your name <span class="highlight">{{Receipient_name}}</span> will be automatically replaced when sending
+            emails.</p>
+
+        <p>You can customize this template with:</p>
+        <ul>
+            <li>Your own branding and colors</li>
+            <li>Custom content and messaging</li>
+            <li>Additional personalization fields</li>
+            <li>Images and logos</li>
+        </ul>
+
+        <p>Best regards,<br>
+            The Beacon Team</p>
+    </div>
+
+    <div class="footer">
+        <p>This is an automated email. Please do not reply to this message.</p>
+    </div>
+</body>
+
+</html>

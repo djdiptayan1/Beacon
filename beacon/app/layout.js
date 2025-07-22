@@ -1,5 +1,3 @@
-import Head from 'next/head';
-import Favicon from './favicon.png';
 import { Inter } from 'next/font/google';
 import "./globals.css";
 import Navbar2 from "@/components/Navbar/Navbar";
@@ -10,31 +8,39 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "Beacon - Simplifying Mass Mailing",
   description: "Beacon offers user-friendly, scalable mass mailing solutions designed to boost your marketing efforts and reach your audience effectively.",
-  image: "./favicon.png",
-  url: "https://beacon.djdiptayan.in/",
-  icons: [{ rel: 'icon', url: Favicon.src }],
+  metadataBase: new URL("https://beacon.djdiptayan.in/"),
+  openGraph: {
+    title: "Beacon - Simplifying Mass Mailing",
+    description: "Beacon offers user-friendly, scalable mass mailing solutions designed to boost your marketing efforts and reach your audience effectively.",
+    url: "https://beacon.djdiptayan.in/",
+    siteName: "Beacon",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.png" },
+    ],
+    apple: [
+      { url: "/favicon.png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
+  alternates: {
+    canonical: "https://beacon.djdiptayan.in/",
+  },
 };
-
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <Head>
-        <title>{metadata.title}</title>
-        <meta name="description" content={metadata.description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="./favicon.png" sizes='any' />
-        <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="./favicon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={metadata.title} />
-        <meta property="og:description" content={metadata.description} />
-        <meta property="og:image" content="./favicon.png" />
-        <meta property="og:url" content="https://beacon.djdiptayan.in/" />
-        <meta property="og:site_name" content="Beacon" />
-        <link rel="canonical" href="https://beacon.djdiptayan.in/" />
-      </Head>
       <body className={inter.className}>
         <Navbar2 />
         {children}
