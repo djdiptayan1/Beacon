@@ -1,45 +1,67 @@
-import { motion } from 'framer-motion';
-import PropTypes from 'prop-types';
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Error_Popup = ({ onClose }) => {
     return (
-        <>
-            <motion.div role="alert" className="rounded border-s-4 border-red-500 bg-red-50 p-4"
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 overflow-y-auto"
+                aria-labelledby="modal-title"
+                role="dialog"
+                aria-modal="true"
             >
-                <button
-                    onClick={onClose}
-                    className="absolute top-0 right-0 p-2 focus:outline-none"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-green-800">
-                        <path
-                            fillRule="evenodd"
-                            d="M2.293 2.293a1 1 0 011.414 0L10 8.586l6.293-6.293a1 1 0 011.414 1.414L11.414 10l6.293 6.293a1 1 0 01-1.414 1.414L10 11.414l-6.293 6.293a1 1 0 01-1.414-1.414L8.586 10 2.293 3.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                </button>
+                <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                        aria-hidden="true"
+                        onClick={onClose}
+                    ></motion.div>
 
-                <div className="flex items-center gap-2 text-red-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                        <path
-                            fillRule="evenodd"
-                            d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
+                    <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                    <strong className="block font-medium"> Something went wrong </strong>
+                    <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6"
+                    >
+                        <div>
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <div className="mt-3 text-center sm:mt-5">
+                                <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                    Error
+                                </h3>
+                                <div className="mt-2">
+                                    <p className="text-sm text-gray-500">
+                                        There was an error sending your emails. Please check your input and try again.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-5 sm:mt-6">
+                            <button
+                                type="button"
+                                className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
+                                onClick={onClose}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </motion.div>
                 </div>
-
-                <p className="mt-2 text-sm text-red-700">
-                    Sorry, an error occurred while processing your request. Please try again later.
-                </p>
             </motion.div>
-        </>
-    )
-}
-Error_Popup.propTypes = {
-    onClose: PropTypes.func.isRequired,
+        </AnimatePresence>
+    );
 };
 
-export default Error_Popup
+export default Error_Popup;

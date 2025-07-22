@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Email</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .content h2 {
+            color: #333333;
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .content p {
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .welcome-message h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .welcome-message p {
+            margin-bottom: 10px;
+            color: #424242;
+        }
+
+        .next-steps {
+            background-color: #ffffff;
+            border: 2px solid #e8f5e8;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .next-steps h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h4 {
+            margin: 0 0 8px 0;
+            color: #333333;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .step-content p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 40px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+        }
+
+        .cta-section h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background-color: #ffffff;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .support-section {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .support-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .support-section p {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .support-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .support-link {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #ffffff;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid #dee2e6;
+        }
+
+        .support-link:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                margin: 10px;
+                width: calc(100% - 20px) !important;
+            }
+
+            .header,
+            .content,
+            .next-steps,
+            .cta-section,
+            .support-section,
+            .footer {
+                padding: 20px !important;
+            }
+
+            .header h1 {
+                font-size: 28px !important;
+            }
+
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .support-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="welcome-icon">
+                👋
+            </div>
+            <h1>Welcome Aboard!</h1>
+            <p>We're thrilled to have you join us</p>
+        </div>
+
+        <div class="content">
+            <h2>Hello {{recipient_field}}!</h2>
+
+            <p>A warm welcome to our community! We're absolutely delighted that you've decided to join us on this
+                exciting journey.</p>
+
+            <div class="welcome-message">
+                <h3>🎉 You're Now Part of Something Special!</h3>
+                <p>Welcome to a community that values innovation, growth, and success. Here, you'll find tools,
+                    resources, and support to help you achieve your goals.</p>
+                <p>We believe that great things happen when passionate people come together, and we're excited to see
+                    what we'll accomplish with you on board!</p>
+            </div>
+
+            <p>To help you get started on the right foot, we've prepared a simple guide that will walk you through
+                everything you need to know.</p>
+
+            <div class="next-steps">
+                <h3>🚀 Your Next Steps</h3>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Complete Your Profile</h4>
+                        <p>Add your personal information and preferences to personalize your experience with us.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Explore Our Platform</h4>
+                        <p>Take a tour of our features and discover all the tools available to help you succeed.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Join the Community</h4>
+                        <p>Connect with other members, participate in discussions, and start building valuable
+                            relationships.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Start Your Journey</h4>
+                        <p>Begin using our tools and resources to work towards your goals and objectives.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h3>Ready to Get Started?</h3>
+                <p>Your dashboard is waiting for you with personalized recommendations and next steps.</p>
+                <a href="#" class="cta-button">Access Your Dashboard</a>
+            </div>
+
+            <div class="support-section">
+                <h3>💬 Need Help? We're Here for You!</h3>
+                <p>Our support team is always ready to assist you. Don't hesitate to reach out if you have any
+                    questions.</p>
+                <div class="support-links">
+                    <a href="#" class="support-link">📚 Help Center</a>
+                    <a href="#" class="support-link">💬 Live Chat</a>
+                    <a href="#" class="support-link">📧 Email Support</a>
+                </div>
+            </div>
+
+            <p>Once again, welcome to our community! We're here to support you every step of the way, and we can't wait
+                to see the amazing things you'll accomplish.</p>
+
+            <p>Here's to your success!</p>
+
+            <p>Warm regards,<br>
+                <strong>The Welcome Team</strong>
+            </p>
+        </div>
+
+        <div class="footer">
+            <div class="social-links">
+                <a href="#">Website</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Help Center</a>
+            </div>
+            <p>You're receiving this because you recently joined our platform.</p>
+            <p>Questions? Just reply to this email - we're always happy to help!</p>
+            <p>&copy; 2025 Your Company Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>
