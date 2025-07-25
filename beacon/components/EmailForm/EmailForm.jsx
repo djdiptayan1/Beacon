@@ -470,7 +470,7 @@ const EmailForm = () => {
                                             </a>
                                         </div>
 
-                                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                        {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                                             <p className="font-medium mb-2 text-yellow-800">⚠️ AWS SES Sandbox Mode:</p>
                                             <div className="ml-4 text-yellow-700 text-xs space-y-1">
                                                 <p>• In sandbox mode, emails can only be sent TO verified addresses</p>
@@ -478,7 +478,7 @@ const EmailForm = () => {
                                                 <p>• <strong>For production:</strong> Request production access in AWS SES</p>
                                                 <p>• Sender email must also be verified in AWS SES</p>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
 
