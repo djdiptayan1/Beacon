@@ -39,7 +39,7 @@ export async function POST(request) {
 
         // Configure AWS SES Client
         const awsConfig = {
-            region: process.env.AWS_SES_REGION || process.env.AWS_REGION || 'us-east-1',
+            region: process.env.AWS_SES_REGION,
             credentials: {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
