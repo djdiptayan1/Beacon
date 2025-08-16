@@ -12,6 +12,7 @@ export async function POST(request) {
         const htmlTemplate = formData.get('html_template');
         const senderEmail = formData.get('sender_email');
         const subject = formData.get('subject');
+        const templateType = formData.get('template_type') || 'upload'; // Default to upload for backward compatibility
 
         // Validate required fields
         if (!csvFile || !htmlTemplate || !senderEmail || !subject) {
@@ -34,12 +35,13 @@ export async function POST(request) {
             csvFileSize: csvFile.size,
             htmlTemplateSize: htmlTemplate.size,
             senderEmail,
-            subject
+            subject,
+            templateType
         });
 
         // Configure AWS SES Client
         const awsConfig = {
-            region: process.env.AWS_SES_REGION || process.env.AWS_REGION || 'us-east-1',
+            region: process.env.AWS_SES_REGION,
             credentials: {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -148,6 +150,8 @@ export async function POST(request) {
                     const placeholder = new RegExp(`{{${key}}}`, 'g');
                     personalizedTemplate = personalizedTemplate.replace(placeholder, row[key]);
                 });
+
+                const isPlainTextOnly = false; // We always send as HTML now since rich text editor produces HTML
 
                 // Create SES email parameters
                 const emailParams = {
