@@ -1,0 +1,89 @@
+/* Custom Quill Editor Styles */
+@import "quill/dist/quill.snow.css";
+
+.rich-text-editor .ql-toolbar {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  background: #f9fafb;
+  padding: 12px;
+}
+
+.rich-text-editor .ql-container {
+  border: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.rich-text-editor .ql-editor {
+  padding: 16px;
+  min-height: 200px;
+  color: #374151;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  color: #9ca3af;
+  font-style: normal;
+  left: 16px;
+}
+
+.rich-text-editor .ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+.rich-text-editor .ql-toolbar button {
+  padding: 6px;
+  border-radius: 6px;
+  margin: 0 2px;
+}
+
+.rich-text-editor .ql-toolbar button:hover {
+  background: #e5e7eb;
+}
+
+.rich-text-editor .ql-toolbar button.ql-active {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.rich-text-editor .ql-toolbar .ql-picker {
+  color: #374151;
+}
+
+.rich-text-editor .ql-toolbar .ql-picker-options {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.rich-text-editor .ql-toolbar .ql-picker-item:hover {
+  background: #f3f4f6;
+}
+
+/* Focus styles */
+.rich-text-editor:focus-within .ql-toolbar {
+  border-bottom-color: #10b981;
+}
+
+.rich-text-editor:focus-within .ql-container {
+  border-color: #10b981;
+}
+
+/* Custom color palette */
+.rich-text-editor .ql-color .ql-picker-options,
+.rich-text-editor .ql-background .ql-picker-options {
+  width: 200px;
+  padding: 8px;
+}
+
+.rich-text-editor .ql-color .ql-picker-item,
+.rich-text-editor .ql-background .ql-picker-item {
+  border-radius: 4px;
+  margin: 2px;
+}
