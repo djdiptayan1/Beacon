@@ -13,6 +13,7 @@ const EmailForm = () => {
     const [showErrorPopup, setShowErrorPopup] = useState(false);
     const [sending, setSending] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [successData, setSuccessData] = useState(null);
     const [file_csv, setFile_csv] = useState(null);
     const [file_html, setFile_html] = useState(null);
     const [textContent, setTextContent] = useState('');
@@ -117,6 +118,7 @@ const EmailForm = () => {
 
             if (response.ok && data.success) {
                 console.log('Email sent successfully:', data);
+                setSuccessData(data); // Store the detailed response data
                 setShowSuccessPopup(true);
                 setSuccess(true);
             } else {
@@ -159,6 +161,7 @@ const EmailForm = () => {
     const closePopup = () => {
         setShowSuccessPopup(false);
         setShowErrorPopup(false);
+        setSuccessData(null); // Clear success data when closing
     };
 
     return (
@@ -482,7 +485,7 @@ const EmailForm = () => {
                 </motion.div>
 
                 {/* Popups */}
-                {showSuccessPopup && <Success_Popup onClose={closePopup} />}
+                {showSuccessPopup && <Success_Popup onClose={closePopup} successData={successData} />}
                 {showErrorPopup && <Error_Popup onClose={closePopup} />}
             </div>
         </section>
