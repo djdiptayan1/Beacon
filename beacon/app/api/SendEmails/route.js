@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 export async function POST(request) {
-    let tempDir;
+    // No tempDir needed; use in-memory buffers
     try {
         const formData = await request.formData();
         const csvFile = formData.get('csv_excel');
@@ -67,31 +67,21 @@ export async function POST(request) {
 
         const sesClient = new SESClient(awsConfig);
 
-        // Create a temporary directory for file processing
-        tempDir = await fs.mkdtemp(path.join(process.cwd(), 'temp-'));
-        const csvPath = path.join(tempDir, 'data.xlsx');
-        const templatePath = path.join(tempDir, 'template.html');
-
-        // Save uploaded files
+        // Use in-memory buffers for file processing
         const csvBuffer = Buffer.from(await csvFile.arrayBuffer());
-        await fs.writeFile(csvPath, csvBuffer);
-
         const templateBuffer = Buffer.from(await htmlTemplate.arrayBuffer());
-        await fs.writeFile(templatePath, templateBuffer);
 
-        // Read Excel file
-        const fileBuffer = await fs.readFile(csvPath);
-        const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+        // Read Excel file from buffer
+        const workbook = XLSX.read(csvBuffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const data = XLSX.utils.sheet_to_json(worksheet);
 
-        // Read template
-        let template = await fs.readFile(templatePath, 'utf-8');
+        // Read template from buffer
+        let template = templateBuffer.toString('utf-8');
 
         // Validate Excel data structure
         if (data.length === 0) {
-            await fs.rm(tempDir, { recursive: true, force: true });
             return NextResponse.json(
                 { success: false, message: 'Excel file is empty or invalid' },
                 { status: 400 }
@@ -104,7 +94,6 @@ export async function POST(request) {
         console.log('Available columns in Excel:', availableColumns);
 
         if (!firstRow.Name || !firstRow.Email) {
-            await fs.rm(tempDir, { recursive: true, force: true });
             return NextResponse.json(
                 {
                     success: false,
@@ -212,9 +201,6 @@ export async function POST(request) {
             }
         }
 
-        // Clean up temporary files
-        await fs.rm(tempDir, { recursive: true, force: true });
-
         // Calculate summary
         const successCount = results.filter(r => r.status === 'success').length;
         const errorCount = results.filter(r => r.status === 'error').length;
@@ -261,14 +247,7 @@ export async function POST(request) {
     } catch (error) {
         console.error('Error processing request:', error);
 
-        // Clean up temporary files if they exist
-        try {
-            if (tempDir) {
-                await fs.rm(tempDir, { recursive: true, force: true });
-            }
-        } catch (cleanupError) {
-            console.error('Error during cleanup:', cleanupError);
-        }
+        // No temp files to clean up
 
         return NextResponse.json(
             {
