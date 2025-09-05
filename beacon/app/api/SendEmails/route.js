@@ -131,8 +131,8 @@ export async function POST(request) {
                 // Replace placeholders in template
                 let personalizedTemplate = template;
 
-                // Replace {{Receipient_name}} with the actual name
-                personalizedTemplate = personalizedTemplate.replace(/{{Receipient_name}}/g, row.Name);
+                // Replace {{Recipient_name}} with the actual name
+                personalizedTemplate = personalizedTemplate.replace(/{{Recipient_name}}/g, row.Name);
 
                 // Replace any other placeholders that might exist
                 Object.keys(row).forEach(key => {
