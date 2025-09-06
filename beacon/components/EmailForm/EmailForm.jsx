@@ -320,7 +320,7 @@ const EmailForm = () => {
                                     />
                                     <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                                         <p className="text-sm text-gray-600">
-                                            <span className="font-medium">Tip:</span> Use <code className="bg-gray-200 px-1 rounded">{"{{Receipient_name}}"}</code> in your HTML template for personalization with recipient names.
+                                            <span className="font-medium">Tip:</span> Use <code className="bg-gray-200 px-1 rounded">{"{{Recipient_name}}"}</code> in your HTML template for personalization with recipient names.
                                             <br /><span className="font-medium">HTML Mode:</span> You can use HTML tags for rich formatting.
                                         </p>
                                     </div>
@@ -338,7 +338,7 @@ const EmailForm = () => {
                                                 onChange={setTextContent}
                                                 modules={quillModules}
                                                 formats={quillFormats}
-                                                placeholder="Write your email content here. Use {{Receipient_name}} to personalize with recipient names."
+                                                placeholder="Write your email content here. Use {{Recipient_name}} to personalize with recipient names."
                                                 style={{
                                                     height: '200px',
                                                     borderRadius: '12px',
@@ -349,7 +349,7 @@ const EmailForm = () => {
                                     )}
                                     <div className="mt-16 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                                         <p className="text-sm text-gray-600">
-                                            <span className="font-medium">Tip:</span> Use <code className="bg-gray-200 px-1 rounded">{"{{Receipient_name}}"}</code> for personalization with recipient names.
+                                            <span className="font-medium">Tip:</span> Use <code className="bg-gray-200 px-1 rounded">{"{{Recipient_name}}"}</code> for personalization with recipient names.
                                             <br /><span className="font-medium">Rich Text Mode:</span> Use the toolbar above for formatting - bold, italic, colors, lists, links, and more!
                                         </p>
                                     </div>
@@ -417,7 +417,7 @@ const EmailForm = () => {
                                         <div className="ml-4 mb-2 space-y-1">
                                             <p className="text-xs">• <strong>HTML Template:</strong> Upload .html or .htm files with rich formatting</p>
                                             <p className="text-xs">• <strong>Rich Text Template:</strong> Use the rich text editor for Gmail-like formatting</p>
-                                            <p className="text-xs">• Use <code className="bg-blue-100 px-1 rounded">{"{{Receipient_name}}"}</code> for personalization</p>
+                                            <p className="text-xs">• Use <code className="bg-blue-100 px-1 rounded">{"{{Recipient_name}}"}</code> for personalization</p>
                                         </div>
                                         <div className="flex space-x-4 ml-4">
                                             <a
