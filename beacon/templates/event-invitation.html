@@ -4,158 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Invitation</title>
+    <title>Git Commits - Session 2: Introduction to ML</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background-color: #f5f7fa;
-            color: #333333;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background-color: #ffffff;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 255, 136, 0.15);
+            border: 1px solid #00ff88;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        }
-
-        .header h1 {
-            color: #ffffff;
-            margin: 0;
-            font-size: 30px;
-            font-weight: 700;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header p {
-            color: rgba(255, 255, 255, 0.9);
-            margin: 10px 0 0 0;
-            font-size: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .event-badge {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 15px;
-            display: inline-block;
-            position: relative;
-            z-index: 1;
-        }
-
-        .content {
-            padding: 40px 30px;
-        }
-
-        .content h2 {
-            color: #333333;
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .content p {
-            line-height: 1.7;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .event-details {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
             padding: 30px;
-            border-radius: 10px;
-            margin: 30px 0;
-            border: 1px solid #dee2e6;
-        }
-
-        .event-details h3 {
-            color: #495057;
-            margin-bottom: 20px;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px 0;
-        }
-
-        .detail-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .detail-text {
-            flex: 1;
-        }
-
-        .detail-text strong {
-            display: block;
-            color: #495057;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .detail-text span {
-            color: #6c757d;
-            font-size: 14px;
-        }
-
-        .cta-section {
             text-align: center;
-            margin: 40px 0;
-            padding: 40px 30px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border-radius: 15px;
             position: relative;
             overflow: hidden;
         }
 
-        .cta-section::before {
+        .header::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: float 6s ease-in-out infinite;
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.1) 2px,
+                    rgba(255, 255, 255, 0.1) 4px);
+            animation: float 8s ease-in-out infinite;
         }
 
         @keyframes float {
@@ -166,90 +56,145 @@
             }
 
             50% {
-                transform: translateY(-20px) rotate(180deg);
+                transform: translateY(-10px) rotate(180deg);
             }
         }
 
-        .cta-section h3 {
+        .header h1 {
+            color: #000000;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 900;
+            position: relative;
+            z-index: 1;
+        }
+
+        .event-badge {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
             color: white;
-            margin-bottom: 15px;
-            font-size: 22px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: 700;
-            position: relative;
-            z-index: 1;
-        }
-
-        .cta-section p {
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 25px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .cta-button {
+            margin-top: 15px;
             display: inline-block;
-            padding: 18px 40px;
-            background-color: #ffffff;
-            color: #28a745;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+        }
+
+        .content {
+            padding: 30px;
+            background: #1a1a1a;
+        }
+
+        .poster-section {
+            text-align: center;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1f1f1f 100%);
+        }
+
+        .poster-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #000000;
+            padding: 15px 30px;
+            border-radius: 25px;
             text-decoration: none;
-            border-radius: 30px;
             font-weight: 700;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 1;
+            margin-top: 15px;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        .poster-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
         }
 
-        .agenda {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            margin: 30px 0;
-        }
-
-        .agenda h3 {
-            color: #495057;
-            margin-bottom: 20px;
+        .greeting {
             font-size: 20px;
-        }
-
-        .agenda-item {
-            display: flex;
+            color: #00ff88;
             margin-bottom: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            font-weight: 700;
         }
 
-        .agenda-time {
+        .content p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+
+        .highlight {
+            color: #00ff88;
             font-weight: 600;
-            color: #667eea;
-            margin-right: 20px;
-            min-width: 80px;
         }
 
-        .agenda-content {
-            flex: 1;
+        .event-details {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1f1f1f 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #00ff88;
+            text-align: center;
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+
+        .detail-item strong {
+            color: #00ff88;
+            font-weight: 700;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .detail-item span {
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin: 25px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            border-radius: 15px;
+        }
+
+        .cta-section h3 {
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .cta-section p {
+            color: #000000;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
         .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 30px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #b0b0b0;
+            padding: 25px;
             text-align: center;
+            border-top: 2px solid #00ff88;
         }
 
         .footer p {
             margin: 5px 0;
             font-size: 14px;
-            opacity: 0.8;
+        }
+
+        .footer a {
+            color: #00ff88;
+            text-decoration: none;
+            font-weight: 600;
         }
 
         @media only screen and (max-width: 600px) {
@@ -262,23 +207,13 @@
             .content,
             .event-details,
             .cta-section,
-            .agenda,
+            .poster-section,
             .footer {
                 padding: 20px !important;
             }
 
             .header h1 {
-                font-size: 26px !important;
-            }
-
-            .detail-item {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .detail-icon {
-                margin-right: 0;
-                margin-bottom: 10px;
+                font-size: 24px !important;
             }
         }
     </style>
@@ -287,116 +222,63 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 You're Invited!</h1>
-            <p>Join us for an exclusive event</p>
-            <div class="event-badge">VIP ACCESS</div>
+            <h1>Git Commits - Session 2</h1>
+            <div class="event-badge">Introduction to ML</div>
         </div>
 
         <div class="content">
-            <h2>Dear {{recipient_field}},</h2>
+            <div class="greeting">Hey {{Recipient_name}}!</div>
 
-            <p>We're excited to personally invite you to our upcoming exclusive event! This is a special opportunity to
-                connect, learn, and be part of something amazing.</p>
+            <p>Your <span class="highlight">Git Commits journey</span> starts tomorrow! Get ready to dive into the world
+                of GitHub and version control with our amazing community.</p>
 
-            <p>This event has been designed specifically for valued members like you, and we can't wait to share this
-                experience together.</p>
-
-            <div class="event-details">
-                <h3>📅 Event Details</h3>
-
-                <div class="detail-item">
-                    <div class="detail-icon">
-                        <span style="color: white; font-size: 18px;">📅</span>
-                    </div>
-                    <div class="detail-text">
-                        <strong>Date & Time</strong>
-                        <span>March 15, 2025 | 2:00 PM - 5:00 PM EST</span>
-                    </div>
-                </div>
-
-                <div class="detail-item">
-                    <div class="detail-icon">
-                        <span style="color: white; font-size: 18px;">📍</span>
-                    </div>
-                    <div class="detail-text">
-                        <strong>Location</strong>
-                        <span>Grand Convention Center, 123 Event Street, City</span>
-                    </div>
-                </div>
-
-                <div class="detail-item">
-                    <div class="detail-icon">
-                        <span style="color: white; font-size: 18px;">👥</span>
-                    </div>
-                    <div class="detail-text">
-                        <strong>Capacity</strong>
-                        <span>Limited to 100 exclusive guests</span>
-                    </div>
-                </div>
-
-                <div class="detail-item">
-                    <div class="detail-icon">
-                        <span style="color: white; font-size: 18px;">🍽️</span>
-                    </div>
-                    <div class="detail-text">
-                        <strong>Refreshments</strong>
-                        <span>Premium catering and networking reception</span>
-                    </div>
-                </div>
+            <div class="poster-section">
+                <img src="https://res.cloudinary.com/doslhy0tq/image/upload/v1756924053/gitcommit-49_qcijia.png"
+                    alt="Event Poster"
+                    style="max-width:100%; border-radius: 10px; border: 2px solid #00ff88; box-shadow: 0 4px 20px rgba(0,255,136,0.15);" />
             </div>
 
-            <div class="agenda">
-                <h3>📋 Event Agenda</h3>
-                <div class="agenda-item">
-                    <div class="agenda-time">2:00 PM</div>
-                    <div class="agenda-content">
-                        <strong>Welcome & Registration</strong><br>
-                        <span style="color: #6c757d;">Check-in and networking reception</span>
-                    </div>
+            <div class="event-details">
+                <div class="detail-item">
+                    <strong>Time</strong>
+                    <span>5:00 PM</span>
                 </div>
-                <div class="agenda-item">
-                    <div class="agenda-time">2:30 PM</div>
-                    <div class="agenda-content">
-                        <strong>Keynote Presentation</strong><br>
-                        <span style="color: #6c757d;">Industry insights and future trends</span>
-                    </div>
+
+                <div class="detail-item">
+                    <strong>Venue</strong>
+                    <span>TP 301, SRM Campus</span>
                 </div>
-                <div class="agenda-item">
-                    <div class="agenda-time">3:30 PM</div>
-                    <div class="agenda-content">
-                        <strong>Interactive Workshop</strong><br>
-                        <span style="color: #6c757d;">Hands-on learning and collaboration</span>
-                    </div>
-                </div>
-                <div class="agenda-item">
-                    <div class="agenda-time">4:30 PM</div>
-                    <div class="agenda-content">
-                        <strong>Networking & Closing</strong><br>
-                        <span style="color: #6c757d;">Connect with fellow attendees</span>
-                    </div>
+
+                <div class="detail-item">
+                    <strong>Topic: Introduction to ML</strong>
+                    <span>ML basics • Supervised vs Unsupervised • Real-world examples</span>
                 </div>
             </div>
 
             <div class="cta-section">
-                <h3>Secure Your Spot Now!</h3>
-                <p>Limited seats available - RSVP today to guarantee your place at this exclusive event.</p>
-                <a href="#" class="cta-button">RSVP Now - Free</a>
+                <h3>See You in Episode 2!</h3>
+                <p>Bring your <strong><span class="highlight">fully charged</span></strong> laptop and get ready to
+                    explore Machine Learning.
+                </p>
             </div>
 
-            <p>We're looking forward to seeing you there and sharing this incredible experience together!</p>
 
-            <p>If you have any questions or special requirements, please don't hesitate to reach out to our event team.
-            </p>
+            <p>Questions? Join our Discord community for instant support!</p>
+            <div style="text-align:center;">
+                <a href="https://discord.gg/vdJmdmG4NW" target="_blank"
+                    style="display:inline-block; background:linear-gradient(135deg,#5865F2 0%,#404EED 100%); color:#fff; padding:14px 32px; border-radius:30px; font-size:17px; font-weight:700; text-decoration:none; box-shadow:0 4px 16px rgba(88,101,242,0.15); transition:background 0.3s;">Join
+                    Discord 🚀</a>
+            </div>
 
-            <p>Warm regards,<br>
-                <strong>The Event Team</strong>
+            <p>Cheers,<br>
+                <strong style="color: #00ff88;">GitHub Community SRM Team</strong>
             </p>
         </div>
 
         <div class="footer">
-            <p>Can't make it? We'll miss you! Let us know if you'd like to be notified about future events.</p>
-            <p>To unsubscribe from event invitations, <a href="#" style="color: #20c997;">click here</a>.</p>
-            <p>&copy; 2025 Your Company Name. All rights reserved.</p>
+            <p><strong>GitHub Community SRM</strong> - Your gateway to open-source excellence</p>
+            <p>Can't make it? <a href="#">Let us know here</a></p>
+            <p>&copy; 2025 GitHub Community SRM</p>
         </div>
     </div>
 </body>
