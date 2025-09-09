@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 You Won Free Domains! - GitHub Community SRM</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.15);
+            border: 2px solid #FFD700;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.1) 2px,
+                    rgba(255, 255, 255, 0.1) 4px);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(180deg);
+            }
+        }
+
+        .trophy-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: #000000;
+            margin: 0;
+            font-size: 32px;
+            font-weight: 900;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
+
+        .winner-badge {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 15px;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 40px 30px;
+            background: #1a1a1a;
+        }
+
+        .greeting {
+            font-size: 24px;
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .content p {
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+
+        .highlight {
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        .domain-section {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1f1f1f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 2px solid #FFD700;
+            text-align: center;
+        }
+
+        .domain-section h3 {
+            color: #FFD700;
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .domain-list {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .domain-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            font-size: 18px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .domain-item .icon {
+            color: #FFD700;
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .urgent-section {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+            border: 2px solid #ff6666;
+        }
+
+        .urgent-section h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .countdown {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffffff;
+            margin: 15px 0;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 15px;
+        }
+
+        .cta-section h3 {
+            color: #000000;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: #FFD700;
+            padding: 18px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            border: 2px solid #FFD700;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000000;
+        }
+
+        .instructions-section {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1f1f1f 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 2px solid #00ff88;
+        }
+
+        .instructions-section h3 {
+            color: #00ff88;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding: 10px 0;
+        }
+
+        .step-number {
+            background: #00ff88;
+            color: #000000;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: #e0e0e0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .pdf-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #000000;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .pdf-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #b0b0b0;
+            padding: 30px;
+            text-align: center;
+            border-top: 2px solid #FFD700;
+        }
+
+        .footer p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #FFD700;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                margin: 10px;
+                width: calc(100% - 20px) !important;
+            }
+
+            .header,
+            .content,
+            .domain-section,
+            .urgent-section,
+            .cta-section,
+            .instructions-section,
+            .footer {
+                padding: 20px !important;
+            }
+
+            .header h1 {
+                font-size: 26px !important;
+            }
+
+            .greeting {
+                font-size: 20px !important;
+            }
+
+            .cta-button {
+                padding: 15px 25px !important;
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="trophy-icon">🏆</div>
+            <h1>Congratulations! You've Won!</h1>
+            <div class="winner-badge">Domain Giveaway Winner</div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">Hey {{Recipient_name}}! 🎉</div>
+
+            <p>We're absolutely <span class="highlight">thrilled</span> to announce that you've won our exclusive domain
+                giveaway! Your participation in the GitHub Community SRM has earned you some amazing prizes.</p>
+
+            <div class="domain-section">
+                <h3>🌐 Your Free .xyz Domain (1 Year)</h3>
+                <div class="domain-list">
+                    <div class="domain-item">
+                        <span class="icon">🌟</span>
+                        <span><strong>.xyz</strong> domain</span>
+                    </div>
+                </div>
+                <p style="color: #FFD700; font-weight: 600; margin-top: 15px;">
+                    Get your free .xyz domain and build your online presence!
+                </p>
+            </div>
+
+            <div class="urgent-section">
+                <h3>⏰ URGENT: Redeem Before Deadline!</h3>
+                <div class="countdown">September 29, 2025</div>
+                <p style="margin: 10px 0; font-size: 16px;">
+                    Don't miss out! You have limited time to claim your free domains.
+                </p>
+            </div>
+
+            <div class="cta-section">
+                <h3>Ready to Claim Your Domains? 🚀</h3>
+                <p style="color: #000000; font-weight: 600; margin-bottom: 20px;">
+                    Download the instruction guide and follow the simple steps to get your .xyz domain!
+                </p>
+                <a href="https://drive.google.com/file/d/1YKFio7-EgNvMOCyR-8lp_mF8fPdESTtQ/view" class="cta-button"
+                    target="_blank">
+                    📄 Download Instructions PDF
+                </a>
+            </div>
+
+            <div class="instructions-section">
+                <h3>📋 Quick Redemption Steps</h3>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <strong>Download the PDF guide</strong> using the button above for detailed instructions.
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <strong>Follow the step-by-step process</strong> outlined in the PDF to claim your .xyz domain.
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <strong>Complete the redemption</strong> before September 29, 2025 to secure your free .xyz
+                        domain.
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">
+                        <strong>Start building!</strong> Use your new .xyz domain to create amazing projects and
+                        websites.
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="https://drive.google.com/file/d/1YKFio7-EgNvMOCyR-8lp_mF8fPdESTtQ/view" class="pdf-link"
+                        target="_blank">
+                        📖 Detailed Instructions PDF
+                    </a>
+                </div>
+            </div>
+
+            <p
+                style="background: rgba(255, 215, 0, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #FFD700;">
+                <strong>Need Help?</strong> If you face any issues during the redemption process, feel free to reach out
+                to our community on Discord or contact our support team. We're here to help you claim your well-deserved
+                .xyz domain!
+            </p>
+
+            <div style="text-align:center; margin: 25px 0;">
+                <a href="https://discord.gg/vdJmdmG4NW" target="_blank"
+                    style="display:inline-block; background:linear-gradient(135deg,#5865F2 0%,#404EED 100%); color:#fff; padding:14px 32px; border-radius:30px; font-size:17px; font-weight:700; text-decoration:none; box-shadow:0 4px 16px rgba(88,101,242,0.15); transition:background 0.3s;">
+                    💬 Join Discord Community
+                </a>
+            </div>
+
+            <p>Once again, <span class="highlight">congratulations</span> on winning this amazing .xyz domain! We can't
+                wait to see the incredible projects you'll build with it.</p>
+
+            <p>Best wishes,<br>
+                <strong style="color: #FFD700;">GitHub Community SRM Team</strong>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p><strong>GitHub Community SRM</strong> - Empowering developers, one domain at a time 🌐</p>
+
+            <div class="social-links">
+                <a href="#" title="GitHub">⚡</a>
+                <a href="#" title="Discord">💬</a>
+                <a href="#" title="LinkedIn">💼</a>
+                <a href="#" title="Twitter">🐦</a>
+            </div>
+
+            <p>Questions about your .xyz domain? <a href="#">Contact our support team</a></p>
+            <p>&copy; 2025 GitHub Community SRM - Making tech dreams come true ✨</p>
+        </div>
+    </div>
+</body>
+
+</html>
