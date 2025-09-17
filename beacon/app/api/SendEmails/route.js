@@ -3,6 +3,7 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import * as XLSX from 'xlsx';
 import { promises as fs } from 'fs';
 import path from 'path';
+import pLimit from 'p-limit';
 
 export async function POST(request) {
     // No tempDir needed; use in-memory buffers
@@ -112,94 +113,162 @@ export async function POST(request) {
         const results = [];
         let processedCount = 0;
 
-        for (const row of data) {
-            try {
-                processedCount++;
-                console.log(`Processing email ${processedCount}/${data.length} for ${row.Email}`);
+        // Instead of for...of
+        const limit = pLimit(12); // 12 concurrent sends (SES default rate)
 
-                // Skip rows with missing email or name
-                if (!row.Email || !row.Name) {
-                    results.push({
-                        email: row.Email || 'Unknown',
-                        name: row.Name || 'Unknown',
-                        status: 'skipped',
-                        message: 'Missing email or name'
-                    });
-                    continue;
-                }
+        // for (const row of data) {
+        //     try {
+        //         processedCount++;
+        //         console.log(`Processing email ${processedCount}/${data.length} for ${row.Email}`);
 
-                // Replace placeholders in template
-                let personalizedTemplate = template;
+        //         // Skip rows with missing email or name
+        //         if (!row.Email || !row.Name) {
+        //             results.push({
+        //                 email: row.Email || 'Unknown',
+        //                 name: row.Name || 'Unknown',
+        //                 status: 'skipped',
+        //                 message: 'Missing email or name'
+        //             });
+        //             continue;
+        //         }
 
-                // Replace {{Recipient_name}} with the actual name
-                personalizedTemplate = personalizedTemplate.replace(/{{Recipient_name}}/g, row.Name);
+        //         // Replace placeholders in template
+        //         let personalizedTemplate = template;
 
-                // Replace any other placeholders that might exist
-                Object.keys(row).forEach(key => {
-                    const placeholder = new RegExp(`{{${key}}}`, 'g');
-                    personalizedTemplate = personalizedTemplate.replace(placeholder, row[key]);
-                });
+        //         // Replace {{Recipient_name}} with the actual name
+        //         personalizedTemplate = personalizedTemplate.replace(/{{Recipient_name}}/g, row.Name);
 
-                const isPlainTextOnly = false; // We always send as HTML now since rich text editor produces HTML
+        //         // Replace any other placeholders that might exist
+        //         Object.keys(row).forEach(key => {
+        //             const placeholder = new RegExp(`{{${key}}}`, 'g');
+        //             personalizedTemplate = personalizedTemplate.replace(placeholder, row[key]);
+        //         });
 
-                // Create SES email parameters
-                const emailParams = {
-                    Source: senderEmail,
-                    Destination: {
-                        ToAddresses: [row.Email],
-                    },
-                    Message: {
-                        Subject: {
-                            Data: subject,
-                            Charset: 'UTF-8',
-                        },
-                        Body: {
-                            Html: {
-                                Data: personalizedTemplate,
-                                Charset: 'UTF-8',
+        //         const isPlainTextOnly = false; // We always send as HTML now since rich text editor produces HTML
+
+        //         // Create SES email parameters
+        //         const emailParams = {
+        //             Source: senderEmail,
+        //             Destination: {
+        //                 ToAddresses: [row.Email],
+        //             },
+        //             Message: {
+        //                 Subject: {
+        //                     Data: subject,
+        //                     Charset: 'UTF-8',
+        //                 },
+        //                 Body: {
+        //                     Html: {
+        //                         Data: personalizedTemplate,
+        //                         Charset: 'UTF-8',
+        //                     },
+        //                 },
+        //             },
+        //         };
+
+        //         // Send email
+        //         const command = new SendEmailCommand(emailParams);
+        //         const response = await sesClient.send(command);
+
+        //         results.push({
+        //             email: row.Email,
+        //             name: row.Name,
+        //             status: 'success',
+        //             message: 'Email sent successfully',
+        //             messageId: response.MessageId
+        //         });
+
+        //         // Add a small delay between emails to avoid rate limiting
+        //         if (processedCount < data.length) {
+        //             await new Promise(resolve => setTimeout(resolve, 100));
+        //         }
+
+        //     } catch (error) {
+        //         console.error(`Error sending email to ${row.Email}:`, error);
+
+        //         // Provide specific error messages
+        //         let errorMessage = error.message || 'Unknown error occurred';
+        //         if (error.message.includes('Email address is not verified')) {
+        //             errorMessage = 'Email address not verified in AWS SES';
+        //         } else if (error.message.includes('AccessDenied')) {
+        //             errorMessage = 'AWS SES permission denied - check IAM permissions';
+        //         } else if (error.message.includes('InvalidParameterValue')) {
+        //             errorMessage = 'Invalid email format or parameters';
+        //         }
+
+        //         results.push({
+        //             email: row.Email,
+        //             name: row.Name,
+        //             status: 'error',
+        //             message: errorMessage
+        //         });
+        //     }
+        // }
+
+        await Promise.all(
+            data.map((row, idx) =>
+                limit(async () => {
+                    try {
+                        processedCount++;
+                        console.log(`Processing email ${processedCount}/${data.length} for ${row.Email}`);
+
+                        if (!row.Email || !row.Name) {
+                            results.push({
+                                email: row.Email || 'Unknown',
+                                name: row.Name || 'Unknown',
+                                status: 'skipped',
+                                message: 'Missing email or name'
+                            });
+                            return;
+                        }
+
+                        // Replace placeholders
+                        let personalizedTemplate = template.replace(/{{Recipient_name}}/g, row.Name);
+                        Object.keys(row).forEach(key => {
+                            const placeholder = new RegExp(`{{${key}}}`, 'g');
+                            personalizedTemplate = personalizedTemplate.replace(placeholder, row[key]);
+                        });
+
+                        const emailParams = {
+                            Source: senderEmail,
+                            Destination: { ToAddresses: [row.Email] },
+                            Message: {
+                                Subject: { Data: subject, Charset: 'UTF-8' },
+                                Body: { Html: { Data: personalizedTemplate, Charset: 'UTF-8' } }
                             },
-                        },
-                    },
-                };
+                        };
 
-                // Send email
-                const command = new SendEmailCommand(emailParams);
-                const response = await sesClient.send(command);
+                        const command = new SendEmailCommand(emailParams);
+                        const response = await sesClient.send(command);
 
-                results.push({
-                    email: row.Email,
-                    name: row.Name,
-                    status: 'success',
-                    message: 'Email sent successfully',
-                    messageId: response.MessageId
-                });
+                        results.push({
+                            email: row.Email,
+                            name: row.Name,
+                            status: 'success',
+                            message: 'Email sent successfully',
+                            messageId: response.MessageId
+                        });
 
-                // Add a small delay between emails to avoid rate limiting
-                if (processedCount < data.length) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
-
-            } catch (error) {
-                console.error(`Error sending email to ${row.Email}:`, error);
-
-                // Provide specific error messages
-                let errorMessage = error.message || 'Unknown error occurred';
-                if (error.message.includes('Email address is not verified')) {
-                    errorMessage = 'Email address not verified in AWS SES';
-                } else if (error.message.includes('AccessDenied')) {
-                    errorMessage = 'AWS SES permission denied - check IAM permissions';
-                } else if (error.message.includes('InvalidParameterValue')) {
-                    errorMessage = 'Invalid email format or parameters';
-                }
-
-                results.push({
-                    email: row.Email,
-                    name: row.Name,
-                    status: 'error',
-                    message: errorMessage
-                });
-            }
-        }
+                    } catch (error) {
+                        console.error(`Error sending email to ${row.Email}:`, error);
+                        let errorMessage = error.message || 'Unknown error occurred';
+                        if (error.message.includes('Email address is not verified')) {
+                            errorMessage = 'Email address not verified in AWS SES';
+                        } else if (error.message.includes('AccessDenied')) {
+                            errorMessage = 'AWS SES permission denied - check IAM permissions';
+                        } else if (error.message.includes('InvalidParameterValue')) {
+                            errorMessage = 'Invalid email format or parameters';
+                        }
+                        results.push({
+                            email: row.Email,
+                            name: row.Name,
+                            status: 'error',
+                            message: error.message || 'Unknown error occurred'
+                        });
+                    }
+                })
+            )
+        );
 
         // Calculate summary
         const successCount = results.filter(r => r.status === 'success').length;
