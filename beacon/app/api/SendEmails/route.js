@@ -41,10 +41,10 @@ export async function POST(request) {
 
         // Configure AWS SES Client
         const awsConfig = {
-            region: process.env.AWS_SES_REGION,
+            region: process.env.GITHUB_AWS_SES_REGION,
             credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                accessKeyId: process.env.GITHUB_AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.GITHUB_AWS_SECRET_ACCESS_KEY,
             },
         };
 
@@ -59,7 +59,7 @@ export async function POST(request) {
                 {
                     success: false,
                     message: 'AWS credentials not configured properly',
-                    details: 'Missing AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY in environment variables'
+                    details: 'Missing GITHUB_AWS_ACCESS_KEY_ID or GITHUB_AWS_SECRET_ACCESS_KEY in environment variables'
                 },
                 { status: 500 }
             );
