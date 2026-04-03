@@ -48,8 +48,8 @@ export async function POST(request) {
         const awsConfig = {
             region: process.env.GITHUB_AWS_SES_REGION,
             credentials: {
-                accessKeyId: process.env.GITHUB_AWS_ACCESS_KEY_ID1,
-                secretAccessKey: process.env.GITHUB_AWS_SECRET_ACCESS_KEY1,
+                accessKeyId: process.env.GITHUB_AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.GITHUB_AWS_SECRET_ACCESS_KEY,
             },
         };
 
