@@ -9,7 +9,7 @@ const Success_Popup = ({ onClose, successData }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 overflow-y-auto"
+                className="fixed inset-0 z-[100] overflow-y-auto"
                 aria-labelledby="modal-title"
                 role="dialog"
                 aria-modal="true"
@@ -20,7 +20,7 @@ const Success_Popup = ({ onClose, successData }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-40"
+                        className="fixed inset-0 bg-gray-900/50 transition-opacity"
                         aria-hidden="true"
                         onClick={onClose}
                     ></motion.div>
@@ -35,7 +35,7 @@ const Success_Popup = ({ onClose, successData }) => {
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.95, opacity: 0 }}
-                        className="relative inline-block align-bottom bg-white rounded-xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full z-50"
+                        className="relative inline-block align-bottom bg-white rounded-2xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full z-10"
                     >
                         <div>
                             {/* Success Icon */}
@@ -156,7 +156,7 @@ const Success_Popup = ({ onClose, successData }) => {
                                                                                     }`}
                                                                             >
                                                                                 {result.status === 'success'
-                                                                                    ? 'ent'
+                                                                                    ? 'Sent'
                                                                                     : result.status === 'error'
                                                                                         ? 'Failed'
                                                                                         : 'Skipped'}

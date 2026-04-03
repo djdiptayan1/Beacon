@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { SESClient, SendEmailCommand, GetSendQuotaCommand } from '@aws-sdk/client-ses';
 import * as XLSX from 'xlsx';
 import { promises as fs } from 'fs';
 import path from 'path';
+
+// Configuration for performance tuning
+const DEFAULT_MAX_SEND_RATE = 12;
+const CONCURRENCY_LIMIT = 10;
+const MAX_SEND_RATE = DEFAULT_MAX_SEND_RATE;
 
 export async function POST(request) {
     // No tempDir needed; use in-memory buffers
@@ -43,16 +48,10 @@ export async function POST(request) {
         const awsConfig = {
             region: process.env.GITHUB_AWS_SES_REGION,
             credentials: {
-                accessKeyId: process.env.GITHUB_AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.GITHUB_AWS_SECRET_ACCESS_KEY,
+                accessKeyId: process.env.GITHUB_AWS_ACCESS_KEY_ID1,
+                secretAccessKey: process.env.GITHUB_AWS_SECRET_ACCESS_KEY1,
             },
         };
-
-        console.log('AWS Configuration:', {
-            region: awsConfig.region,
-            hasAccessKeyId: !!awsConfig.credentials.accessKeyId,
-            hasSecretAccessKey: !!awsConfig.credentials.secretAccessKey
-        });
 
         if (!awsConfig.credentials.accessKeyId || !awsConfig.credentials.secretAccessKey) {
             return NextResponse.json(
@@ -66,6 +65,16 @@ export async function POST(request) {
         }
 
         const sesClient = new SESClient(awsConfig);
+
+        // Fetch dynamic quota but respect the hard-coded MAX_SEND_RATE as a safety ceiling
+        let sessionSendRate = MAX_SEND_RATE;
+        try {
+            const quotaResponse = await sesClient.send(new GetSendQuotaCommand({}));
+            sessionSendRate = Math.min(quotaResponse.MaxSendRate || MAX_SEND_RATE, MAX_SEND_RATE);
+            console.log(`SES Session Rate: ${sessionSendRate} emails/sec (Concurrency: ${CONCURRENCY_LIMIT})`);
+        } catch (quotaError) {
+            console.warn('Quota check unauthorized, using configured MAX_SEND_RATE ceiling:', MAX_SEND_RATE);
+        }
 
         // Use in-memory buffers for file processing
         const csvBuffer = Buffer.from(await csvFile.arrayBuffer());
@@ -108,98 +117,93 @@ export async function POST(request) {
 
         console.log(`Processing ${data.length} records from Excel file`);
 
-        // Send emails using Amazon SES
+        // Send emails using Amazon SES in parallel
         const results = [];
-        let processedCount = 0;
+        const queue = [...data];
 
-        for (const row of data) {
-            try {
-                processedCount++;
-                console.log(`Processing email ${processedCount}/${data.length} for ${row.Email}`);
+        // Adaptive Delay Logic: To maintain X calls/sec, we need (1000ms / rate) gap between starts per worker
+        // But since we have multiple workers, we calculate delay based on the total rate
+        const delayMs = (1000 / sessionSendRate) * CONCURRENCY_LIMIT;
 
-                // Skip rows with missing email or name
-                if (!row.Email || !row.Name) {
-                    results.push({
-                        email: row.Email || 'Unknown',
-                        name: row.Name || 'Unknown',
-                        status: 'skipped',
-                        message: 'Missing email or name'
+        const processQueue = async () => {
+            while (queue.length > 0) {
+                const row = queue.shift();
+                if (!row || !row.Email) continue;
+
+                const startTime = Date.now();
+                try {
+                    // Replace placeholders in template
+                    let personalizedTemplate = template;
+                    personalizedTemplate = personalizedTemplate.replace(/{{Recipient_name}}/g, row.Name);
+
+                    // Replace any other placeholders that might exist
+                    Object.keys(row).forEach(key => {
+                        const placeholder = new RegExp(`{{${key}}}`, 'g');
+                        personalizedTemplate = personalizedTemplate.replace(placeholder, row[key]);
                     });
-                    continue;
-                }
 
-                // Replace placeholders in template
-                let personalizedTemplate = template;
-
-                // Replace {{Recipient_name}} with the actual name
-                personalizedTemplate = personalizedTemplate.replace(/{{Recipient_name}}/g, row.Name);
-
-                // Replace any other placeholders that might exist
-                Object.keys(row).forEach(key => {
-                    const placeholder = new RegExp(`{{${key}}}`, 'g');
-                    personalizedTemplate = personalizedTemplate.replace(placeholder, row[key]);
-                });
-
-                const isPlainTextOnly = false; // We always send as HTML now since rich text editor produces HTML
-
-                // Create SES email parameters
-                const emailParams = {
-                    Source: senderEmail,
-                    Destination: {
-                        ToAddresses: [row.Email],
-                    },
-                    Message: {
-                        Subject: {
-                            Data: subject,
-                            Charset: 'UTF-8',
+                    // Create SES email parameters
+                    const emailParams = {
+                        Source: senderEmail,
+                        Destination: {
+                            ToAddresses: [row.Email],
                         },
-                        Body: {
-                            Html: {
-                                Data: personalizedTemplate,
+                        Message: {
+                            Subject: {
+                                Data: subject,
                                 Charset: 'UTF-8',
                             },
+                            Body: {
+                                Html: {
+                                    Data: personalizedTemplate,
+                                    Charset: 'UTF-8',
+                                },
+                            },
                         },
-                    },
-                };
+                    };
 
-                // Send email
-                const command = new SendEmailCommand(emailParams);
-                const response = await sesClient.send(command);
+                    const command = new SendEmailCommand(emailParams);
+                    const response = await sesClient.send(command);
 
-                results.push({
-                    email: row.Email,
-                    name: row.Name,
-                    status: 'success',
-                    message: 'Email sent successfully',
-                    messageId: response.MessageId
-                });
+                    results.push({
+                        email: row.Email,
+                        name: row.Name,
+                        status: 'success',
+                        message: 'Email sent successfully',
+                        messageId: response.MessageId
+                    });
 
-                // Add a small delay between emails to avoid rate limiting
-                if (processedCount < data.length) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                } catch (error) {
+                    console.error(`Error sending email to ${row.Email}:`, error);
+                    let errorMessage = error.message || 'Unknown error occurred';
+
+                    if (error.name === 'MessageRejected' || error.message.includes('Email address is not verified')) {
+                        errorMessage = `SES Sandbox: Identity not verified. Ensure both sender and recipient (${row.Email}) are verified in AWS SES console.`;
+                    } else if (error.message.includes('AccessDenied')) {
+                        errorMessage = 'AWS SES permission denied - check IAM permissions for ses:SendEmail';
+                    } else if (error.message.includes('InvalidParameterValue')) {
+                        errorMessage = 'Invalid email format or parameters';
+                    }
+
+                    results.push({
+                        email: row.Email,
+                        name: row.Name,
+                        status: 'error',
+                        message: errorMessage
+                    });
+                } finally {
+                    // Throttle execution to respect MaxSendRate
+                    const elapsed = Date.now() - startTime;
+                    if (elapsed < delayMs) {
+                        await new Promise(resolve => setTimeout(resolve, delayMs - elapsed));
+                    }
                 }
-
-            } catch (error) {
-                console.error(`Error sending email to ${row.Email}:`, error);
-
-                // Provide specific error messages
-                let errorMessage = error.message || 'Unknown error occurred';
-                if (error.message.includes('Email address is not verified')) {
-                    errorMessage = 'Email address not verified in AWS SES';
-                } else if (error.message.includes('AccessDenied')) {
-                    errorMessage = 'AWS SES permission denied - check IAM permissions';
-                } else if (error.message.includes('InvalidParameterValue')) {
-                    errorMessage = 'Invalid email format or parameters';
-                }
-
-                results.push({
-                    email: row.Email,
-                    name: row.Name,
-                    status: 'error',
-                    message: errorMessage
-                });
             }
-        }
+        };
+
+        // Start multiple processors in parallel
+        const processors = Array.from({ length: CONCURRENCY_LIMIT }, () => processQueue());
+        await Promise.all(processors);
 
         // Calculate summary
         const successCount = results.filter(r => r.status === 'success').length;
@@ -246,9 +250,6 @@ export async function POST(request) {
 
     } catch (error) {
         console.error('Error processing request:', error);
-
-        // No temp files to clean up
-
         return NextResponse.json(
             {
                 success: false,
