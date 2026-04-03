@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Success_Popup from '../modules/Success_Popup';
 import Error_Popup from '../modules/Error_Popup';
@@ -11,6 +11,7 @@ const EmailForm = () => {
     const formref = useRef(null);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [showErrorPopup, setShowErrorPopup] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [sending, setSending] = useState(false);
     const [success, setSuccess] = useState(false);
     const [successData, setSuccessData] = useState(null);
@@ -69,20 +70,28 @@ const EmailForm = () => {
 
     const handleSendEmail = async (e) => {
         e.preventDefault();
-        setSending(true);
+
+        // Validation for files
+        if (!file_csv) {
+            setErrorMessage('Please upload an Excel or CSV file containing your recipients.');
+            setShowErrorPopup(true);
+            return;
+        }
 
         // Validation for template content
         if (formData_simple.template_type === 'html' && !file_html) {
-            alert('Please upload an HTML template file.');
-            setSending(false);
+            setErrorMessage('Please upload an HTML template file.');
+            setShowErrorPopup(true);
             return;
         }
 
         if (formData_simple.template_type === 'text' && (!textContent.trim() || textContent === '<p><br></p>')) {
-            alert('Please write your email content.');
-            setSending(false);
+            setErrorMessage('Please write your email content in the rich text editor.');
+            setShowErrorPopup(true);
             return;
         }
+
+        setSending(true);
 
         const formData = new FormData();
         const data = formData_simple;
@@ -121,91 +130,84 @@ const EmailForm = () => {
                 setSuccessData(data); // Store the detailed response data
                 setShowSuccessPopup(true);
                 setSuccess(true);
+
+                // Reset form state on success
+                setFile_csv(null);
+                setFile_html(null);
+                setTextContent('');
+                setFormData_simple({
+                    simple: true,
+                    sender_email: '',
+                    subject: '',
+                    template_type: 'html'
+                });
+
+                if (formref.current) {
+                    formref.current.reset();
+                }
             } else {
                 console.error('Error sending email:', data);
                 // Show detailed error information
-                let errorMessage = data.message || 'Unknown error occurred';
+                let msg = data.message || 'Unknown error occurred';
                 if (data.awsNote) {
-                    errorMessage += '\n\n' + data.awsNote;
+                    msg += '\n\n' + data.awsNote;
                 }
                 if (data.summary) {
-                    errorMessage += `\n\nSummary: ${data.summary.successful} sent, ${data.summary.failed} failed, ${data.summary.skipped} skipped`;
+                    msg += `\n\nSummary: ${data.summary.successful} sent, ${data.summary.failed} failed, ${data.summary.skipped} skipped`;
                 }
-                alert(errorMessage);
+                setErrorMessage(msg);
                 setShowErrorPopup(true);
             }
         } catch (error) {
             console.error('Network error:', error);
-            alert('Network error: Unable to connect to the server');
+            setErrorMessage('Network error: Unable to connect to the server. Please check your internet connection.');
             setShowErrorPopup(true);
         } finally {
             setSending(false);
-        }
-
-        // Reset form state
-        setFile_csv(null);
-        setFile_html(null);
-        setTextContent('');
-        setFormData_simple({
-            simple: true,
-            sender_email: '',
-            subject: '',
-            template_type: 'html'
-        });
-
-        if (formref.current) {
-            formref.current.reset();
         }
     };
 
     const closePopup = () => {
         setShowSuccessPopup(false);
         setShowErrorPopup(false);
+        setErrorMessage('');
         setSuccessData(null); // Clear success data when closing
     };
 
     return (
-        <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-24 sm:py-32 overflow-hidden" id="EMAIL_SEND_FORM">
-
+        <section className="relative bg-white py-24 sm:py-32 overflow-hidden" id="EMAIL_SEND_FORM">
             <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="mx-auto max-w-3xl text-center mb-16">
+                <div className="mx-auto max-w-3xl text-center mb-20">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="mb-6"
+                        transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                        className="mb-6 flex justify-center"
                     >
-                        <div className="w-24 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6"></div>
-                        <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            Email Campaign
-                        </h2>
+                        <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-widest">
+                            Campaign Builder
+                        </span>
                     </motion.div>
 
                     <motion.h3
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
+                        transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
+                        className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-6"
                     >
-                        <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
-                            Send Mass Emails
-                        </span>
-                        <span className="block text-3xl sm:text-4xl lg:text-5xl font-light text-gray-600 mt-2">
-                            Effortlessly
-                        </span>
+                        Ready to reach your audience?
                     </motion.h3>
 
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-xl lg:text-2xl text-gray-600 leading-relaxed font-light"
+                        transition={{ duration: 0.6, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                        className="text-lg text-gray-500 max-w-2xl mx-auto"
                     >
-                        Upload your Excel sheet and template to start sending
-                        <span className="text-gray-800 font-medium"> personalized emails</span> to your audience.
+                        Configure your campaign below. We&apos;ll handle the personalization and delivery via your SES environment.
                     </motion.p>
                 </div>
 
@@ -213,183 +215,175 @@ const EmailForm = () => {
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
+                    transition={{ duration: 0.6, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
                     className="mx-auto max-w-4xl"
                 >
-                    <div className="bg-white/70 backdrop-blur-lg rounded-3xl border border-gray-200/50 shadow-2xl p-8 lg:p-12">
-                        <form className="space-y-8" ref={formref} onSubmit={handleSendEmail}>
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl shadow-gray-200/50 p-8 lg:p-12">
+                        <form className="space-y-10" ref={formref} onSubmit={handleSendEmail}>
                             {/* File Upload Section */}
-                            <div className="group">
-                                <label className="block text-sm font-semibold text-gray-800 mb-3">
-                                    Excel/CSV File
+                            <div className="space-y-4">
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">
+                                    1. Audience Data
                                 </label>
-                                <div className="relative">
+                                <div className="relative group">
                                     <input
                                         type="file"
                                         name="csv_excel"
                                         accept=".csv,.xlsx,.xls"
                                         onChange={handleFileChange}
-                                        className="w-full text-sm text-gray-600
-                                                file:mr-4 file:py-3 file:px-6
-                                                file:rounded-xl file:border-0
-                                                file:text-sm file:font-semibold
-                                                file:bg-gradient-to-r file:from-blue-50 file:to-purple-50
-                                                file:text-blue-700 hover:file:from-blue-100 hover:file:to-purple-100
-                                                file:transition-all file:duration-300 file:cursor-pointer
-                                                border-2 border-dashed border-gray-300 rounded-xl p-4
-                                                hover:border-blue-400 transition-colors duration-300
-                                                focus:outline-none focus:border-blue-500"
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                         required
                                     />
+                                    <div className={`
+                                        flex flex-col items-center justify-center p-10 border-2 border-dashed rounded-2xl transition-all duration-300
+                                        ${file_csv ? 'border-blue-500 bg-blue-50/30' : 'border-gray-200 group-hover:border-gray-300 bg-gray-50/50'}
+                                    `}>
+                                        <div className={`p-4 rounded-xl mb-4 transition-transform duration-300 group-hover:scale-110 ${file_csv ? 'bg-blue-100 text-blue-600' : 'bg-white text-gray-400 shadow-sm'}`}>
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            {file_csv ? file_csv.name : 'Click to upload your Excel or CSV'}
+                                        </p>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Ensure columns &quot;Name&quot; and &quot;Email&quot; are present.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Template Type Selection */}
-                            <div className="group">
-                                <label className="block text-sm font-semibold text-gray-800 mb-4">
-                                    Template Type
+                            {/* Template Section */}
+                            <div className="space-y-6">
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">
+                                    2. Email Content
                                 </label>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label className="relative">
-                                        <input
-                                            type="radio"
-                                            name="template_type"
-                                            value="html"
-                                            checked={formData_simple.template_type === 'html'}
-                                            onChange={handleInputChange}
-                                            className="sr-only"
-                                        />
-                                        <div className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${formData_simple.template_type === 'html'
-                                            ? 'border-purple-500 bg-purple-50 text-purple-700'
-                                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                                            }`}>
-                                            <div className="flex flex-col items-center space-y-2">
-                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                                                </svg>
-                                                <span className="font-medium text-center">HTML Template</span>
-                                                <span className="text-xs text-center text-purple-600">Upload File</span>
-                                            </div>
-                                        </div>
-                                    </label>
-                                    <label className="relative">
-                                        <input
-                                            type="radio"
-                                            name="template_type"
-                                            value="text"
-                                            checked={formData_simple.template_type === 'text'}
-                                            onChange={handleInputChange}
-                                            className="sr-only"
-                                        />
-                                        <div className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${formData_simple.template_type === 'text'
-                                            ? 'border-green-500 bg-green-50 text-green-700'
-                                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                                            }`}>
-                                            <div className="flex flex-col items-center space-y-2">
-                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                </svg>
-                                                <span className="font-medium text-center">Rich Text Template</span>
-                                                <span className="text-xs text-center text-green-600">Rich Editor</span>
-                                            </div>
-                                        </div>
-                                    </label>
+
+                                <div className="flex p-1 bg-gray-100 rounded-xl w-fit">
+                                    <motion.button
+                                        type="button"
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => handleInputChange({ target: { name: 'template_type', value: 'html' } })}
+                                        className={`px-6 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${formData_simple.template_type === 'html' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    >
+                                        HTML File
+                                    </motion.button>
+                                    <motion.button
+                                        type="button"
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => handleInputChange({ target: { name: 'template_type', value: 'text' } })}
+                                        className={`px-6 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${formData_simple.template_type === 'text' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    >
+                                        Rich Text
+                                    </motion.button>
                                 </div>
-                            </div>                                {/* Template Content Section */}
-                            {formData_simple.template_type === 'html' ? (
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-800 mb-3">
-                                        Upload HTML Template
-                                    </label>
-                                    <input
-                                        type="file"
-                                        name="html_template"
-                                        accept=".html,.htm"
-                                        onChange={handleFileChange}
-                                        className="w-full text-sm text-gray-600
-                                                file:mr-4 file:py-3 file:px-6
-                                                file:rounded-xl file:border-0
-                                                file:text-sm file:font-semibold
-                                                file:bg-gradient-to-r file:from-purple-50 file:to-pink-50
-                                                file:text-purple-700 hover:file:from-purple-100 hover:file:to-pink-100
-                                                file:transition-all file:duration-300 file:cursor-pointer
-                                                border-2 border-dashed border-gray-300 rounded-xl p-4
-                                                hover:border-purple-400 transition-colors duration-300
-                                                focus:outline-none focus:border-purple-500"
-                                        required
-                                    />
-                                    <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                        <p className="text-sm text-gray-600">
-                                            <span className="font-medium">Tip:</span> Use <code className="bg-gray-200 px-1 rounded">{"{{Recipient_name}}"}</code> in your HTML template for personalization with recipient names.
-                                            <br /><span className="font-medium">HTML Mode:</span> You can use HTML tags for rich formatting.
-                                        </p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-800 mb-3">
-                                        Write Your Email Content
-                                    </label>
-                                    {isQuillLoaded && (
-                                        <div className="transition-colors duration-300">
-                                            <ReactQuill
-                                                theme="snow"
-                                                value={textContent}
-                                                onChange={setTextContent}
-                                                modules={quillModules}
-                                                formats={quillFormats}
-                                                placeholder="Write your email content here. Use {{Recipient_name}} to personalize with recipient names."
-                                                style={{
-                                                    height: '200px',
-                                                    borderRadius: '12px',
-                                                }}
-                                                className="rich-text-editor"
+
+                                <AnimatePresence mode="wait">
+                                    {formData_simple.template_type === 'html' ? (
+                                        <motion.div
+                                            key="html-upload"
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: 10 }}
+                                            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                                            className="relative group"
+                                        >
+                                            <input
+                                                type="file"
+                                                name="html_template"
+                                                accept=".html,.htm"
+                                                onChange={handleFileChange}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                required
                                             />
-                                        </div>
+                                            <div className={`
+                                                flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-2xl transition-all duration-300
+                                                ${file_html ? 'border-purple-500 bg-purple-50/30' : 'border-gray-200 group-hover:border-gray-300 bg-gray-50/50'}
+                                            `}>
+                                                <div className={`p-4 rounded-xl mb-4 transition-transform duration-300 group-hover:scale-110 ${file_html ? 'bg-purple-100 text-purple-600' : 'bg-white text-gray-400 shadow-sm'}`}>
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-sm font-semibold text-gray-900">
+                                                    {file_html ? file_html.name : 'Upload your HTML template'}
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="rich-text"
+                                            initial={{ opacity: 0, x: 10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                                            className="space-y-4"
+                                        >
+                                            {isQuillLoaded && (
+                                                <div className="rounded-2xl border border-gray-200 overflow-hidden bg-gray-50/30">
+                                                    <ReactQuill
+                                                        theme="snow"
+                                                        value={textContent}
+                                                        onChange={setTextContent}
+                                                        modules={quillModules}
+                                                        formats={quillFormats}
+                                                        placeholder="Write your message here. Use {{Recipient_name}} for personalization."
+                                                        style={{ height: '300px' }}
+                                                        className="rich-text-editor"
+                                                    />
+                                                </div>
+                                            )}
+                                        </motion.div>
                                     )}
-                                    <div className="mt-16 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                        <p className="text-sm text-gray-600">
-                                            <span className="font-medium">Tip:</span> Use <code className="bg-gray-200 px-1 rounded">{"{{Recipient_name}}"}</code> for personalization with recipient names.
-                                            <br /><span className="font-medium">Rich Text Mode:</span> Use the toolbar above for formatting - bold, italic, colors, lists, links, and more!
-                                        </p>
+                                </AnimatePresence>
+
+                                <div className="p-4 bg-gray-50 rounded-xl flex items-start space-x-3">
+                                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
                                     </div>
+                                    <p className="text-xs text-gray-500 leading-relaxed">
+                                        <span className="font-bold text-gray-700">Pro-tip:</span> Use <code className="bg-white px-1.5 py-0.5 rounded border border-gray-200 text-blue-600 font-mono">{"{{Recipient_name}}"}</code> anywhere in your message to automatically personalize emails with your contact names.
+                                    </p>
                                 </div>
-                            )}
+                            </div>
 
-                            {/* Form Fields Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-800 mb-3">
-                                        Sender&apos;s Email
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="sender_email"
-                                        value={formData_simple.sender_email}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 
-                                                     focus:border-blue-500 focus:outline-none transition-colors duration-300
-                                                     text-gray-700 placeholder-gray-400"
-                                        placeholder="your@email.com"
-                                        required
-                                    />
-                                </div>
+                            {/* Campaign Details */}
+                            <div className="space-y-6">
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">
+                                    3. Campaign Identity
+                                </label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+                                            Sender Address
+                                        </label>
+                                        <input
+                                            type="email"
+                                            name="sender_email"
+                                            value={formData_simple.sender_email}
+                                            onChange={handleInputChange}
+                                            className="w-full px-5 py-4 rounded-2xl bg-gray-50/50 border border-gray-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200 text-gray-900 font-medium placeholder-gray-400"
+                                            placeholder="verified-sender@yourdomain.com"
+                                            required
+                                        />
+                                    </div>
 
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-800 mb-3">
-                                        Email Subject
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="subject"
-                                        value={formData_simple.subject}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 
-                                                     focus:border-blue-500 focus:outline-none transition-colors duration-300
-                                                     text-gray-700 placeholder-gray-400"
-                                        placeholder="Your email subject"
-                                        required
-                                    />
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+                                            Subject Line
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="subject"
+                                            value={formData_simple.subject}
+                                            onChange={handleInputChange}
+                                            className="w-full px-5 py-4 rounded-2xl bg-gray-50/50 border border-gray-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200 text-gray-900 font-medium placeholder-gray-400"
+                                            placeholder="Your compelling subject line"
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -443,50 +437,54 @@ const EmailForm = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <div className="pt-6">
-                                <button
+                            <div className="pt-10">
+                                <motion.button
+                                    whileHover={{ scale: 1.01 }}
+                                    whileTap={{ scale: 0.99 }}
                                     type="submit"
-                                    disabled={sending || success}
-                                    className={`w-full group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 transform hover:-translate-y-1 ${sending || success
-                                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg'
-                                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-2xl'
+                                    disabled={sending}
+                                    className={`w-full relative inline-flex items-center justify-center px-8 py-5 text-sm font-bold uppercase tracking-widest rounded-2xl transition-all duration-300 ${sending
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                                        : success 
+                                            ? 'bg-green-600 text-white shadow-xl shadow-green-100'
+                                            : 'bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 hover:shadow-blue-200'
                                         }`}
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                                    <span className="relative flex items-center space-x-2">
+                                    <span className="relative flex items-center space-x-3">
                                         {sending ? (
                                             <>
-                                                <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                                                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                 </svg>
-                                                <span>Sending Emails...</span>
+                                                <span>Deploying Campaign...</span>
                                             </>
                                         ) : success ? (
                                             <>
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                 </svg>
-                                                <span>Emails Sent Successfully!</span>
+                                                <span>Campaign Dispatched</span>
                                             </>
                                         ) : (
                                             <>
-                                                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                                 </svg>
-                                                <span>Send Email Campaign</span>
+                                                <span>Launch Campaign</span>
                                             </>
                                         )}
                                     </span>
-                                </button>
+                                </motion.button>
                             </div>
+
                         </form>
                     </div>
                 </motion.div>
 
                 {/* Popups */}
                 {showSuccessPopup && <Success_Popup onClose={closePopup} successData={successData} />}
-                {showErrorPopup && <Error_Popup onClose={closePopup} />}
+                {showErrorPopup && <Error_Popup onClose={closePopup} message={errorMessage} />}
             </div>
         </section>
     );

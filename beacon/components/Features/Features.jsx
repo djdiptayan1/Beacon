@@ -60,21 +60,19 @@ const features = [
 
 const Features = () => {
     return (
-        <section id="features" className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-24 sm:py-32 overflow-hidden">
-
+        <section id="features" className="relative bg-white py-24 sm:py-32 overflow-hidden border-t border-gray-50">
             <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="mx-auto max-w-3xl text-center">
+                <div className="mx-auto max-w-3xl text-center mb-20">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="mb-4"
+                        transition={{ duration: 0.5 }}
+                        className="mb-4 flex justify-center"
                     >
-                        <div className="w-24 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6"></div>
-                        <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            Powerful Features
-                        </h2>
+                        <span className="px-3 py-1 rounded-full bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-widest border border-gray-100">
+                            Capabilities
+                        </span>
                     </motion.div>
 
                     <motion.h3
@@ -82,14 +80,9 @@ const Features = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
+                        className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-6"
                     >
-                        <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
-                            Everything You Need
-                        </span>
-                        <span className="block text-3xl sm:text-4xl lg:text-5xl font-light text-gray-600 mt-2">
-                            For Email Success
-                        </span>
+                        Engineered for reliability.
                     </motion.h3>
 
                     <motion.p
@@ -97,45 +90,36 @@ const Features = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-xl lg:text-2xl text-gray-600 leading-relaxed font-light max-w-2xl mx-auto"
+                        className="text-lg text-gray-500 max-w-2xl mx-auto"
                     >
-                        Our platform provides cutting-edge tools to create, send, and track your
-                        <span className="text-gray-800 font-medium"> email campaigns efficiently</span>.
+                        Everything you need to manage large-scale email operations with the precision and speed of AWS SES.
                     </motion.p>
                 </div>
+
                 <div className="mx-auto mt-20 max-w-6xl">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                         {features.map((feature, index) => (
                             <motion.div
                                 key={feature.name}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileHover={{ y: -5 }}
                                 className="group relative"
                             >
-                                <div className="h-full p-8 bg-white/70 backdrop-blur-lg rounded-3xl border border-gray-200/50 hover:border-blue-300/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden">
-                                    {/* Gradient overlay on hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-purple-50/0 to-pink-50/0 group-hover:from-blue-50/30 group-hover:via-purple-50/20 group-hover:to-pink-50/30 transition-all duration-500 rounded-3xl"></div>
+                                <div className="h-full p-2 transition-all duration-300">
+                                    <div className="mb-6 w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-gray-900 border border-gray-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
+                                        {feature.icon}
+                                    </div>
 
-                                    <div className="relative z-10">
-                                        <div className="mb-6">
-                                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                                                <div className="text-white">
-                                                    {feature.icon}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Content */}
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-gray-800 transition-colors duration-300">
-                                                {feature.name}
-                                            </h3>
-                                            <p className="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                                                {feature.description}
-                                            </p>
-                                        </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-3">
+                                            {feature.name}
+                                        </h3>
+                                        <p className="text-sm text-gray-500 leading-relaxed">
+                                            {feature.description}
+                                        </p>
                                     </div>
                                 </div>
                             </motion.div>
