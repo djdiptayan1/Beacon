@@ -83,11 +83,27 @@ const TutorialPage = () => {
                         <li>Navigate to <strong>IAM</strong> (Identity and Access Management) in AWS.</li>
                         <li>Go to <strong>Users</strong> &gt; <strong>Create User</strong>.</li>
                         <li>Set a name (e.g., <code className="bg-gray-100 px-1 rounded text-pink-600">BeaconUser</code>).</li>
-                        <li>In "Set permissions", select <strong>"Attach policies directly"</strong>.</li>
-                        <li>Search for and check <strong>"AmazonSESFullAccess"</strong>.</li>
-                        <li>Complete creation. Go to the user's <strong>"Security credentials"</strong> tab.</li>
-                        <li>Click <strong>"Create access key"</strong>, select "Application running outside AWS", and save your <strong>Access Key ID</strong> and <strong>Secret Access Key</strong>.</li>
+                        <li>In "Set permissions", create or attach a <strong>least-privilege policy</strong> instead of using <strong>"AmazonSESFullAccess"</strong>.</li>
+                        <li>Grant only the SES permissions Beacon needs, such as <code className="bg-gray-100 px-1 rounded text-pink-600">ses:SendEmail</code>, <code className="bg-gray-100 px-1 rounded text-pink-600">ses:SendRawEmail</code>, and <code className="bg-gray-100 px-1 rounded text-pink-600">ses:GetSendQuota</code>, scoped to your required region and verified identities where possible.</li>
                     </ol>
+                    <div className="bg-gray-900 rounded-xl p-4 font-mono text-sm text-gray-300">
+                        <p>{`{`}</p>
+                        <p>&nbsp;&nbsp;<span className="text-blue-400">"Version"</span>: <span className="text-green-400">"2012-10-17"</span>,</p>
+                        <p>&nbsp;&nbsp;<span className="text-blue-400">"Statement"</span>: [</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;{`{`}</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">"Effect"</span>: <span className="text-green-400">"Allow"</span>,</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">"Action"</span>: [</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-400">"ses:SendEmail"</span>,</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-400">"ses:SendRawEmail"</span>,</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-400">"ses:GetSendQuota"</span></p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;],</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">"Resource"</span>: <span className="text-green-400">"*"</span></p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;{`}`}</p>
+                        <p>&nbsp;&nbsp;]</p>
+                        <p>{`}`}</p>
+                    </div>
+                    <p className="text-gray-600">After attaching the policy, complete user creation. Then open the user's <strong>"Security credentials"</strong> tab.</p>
+                    <p className="text-gray-600">Click <strong>"Create access key"</strong>, select "Application running outside AWS", and save your <strong>Access Key ID</strong> and <strong>Secret Access Key</strong>.</p>
                 </div>
             )
         },
