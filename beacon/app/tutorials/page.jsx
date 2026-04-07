@@ -88,7 +88,7 @@ const TutorialPage = () => {
                     </ol>
                     <div className="bg-gray-900 rounded-xl p-4 font-mono text-sm text-gray-300">
                         <p>{`{`}</p>
-                        <p>&nbsp;&nbsp;<span className="text-blue-400">"Version"</span>: <span className="text-green-400">"2012-10-17"</span>,</p>
+                        <p>&nbsp;&nbsp;<span className="text-blue-400">"Version"</span>: <span className="text-green-400">"2026-04-07"</span>,</p>
                         <p>&nbsp;&nbsp;<span className="text-blue-400">"Statement"</span>: [</p>
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;{`{`}</p>
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">"Effect"</span>: <span className="text-green-400">"Allow"</span>,</p>
